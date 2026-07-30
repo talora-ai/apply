@@ -1,0 +1,38 @@
+{
+    "Login": {
+        "title": "Sign in to your account",
+        "email": "Email",
+        "emailPlaceholder": "you@example.com",
+        "password": "Password",
+        "passwordPlaceholder": "Enter your password",
+        "remember": "Remember me",
+        "forgotPassword": "Forgot your password?",
+        "submit": "Sign in",
+        "submitting": "Signing in...",
+        "noAccount": "Don't have an account?",
+        "createAccount": "Create account",
+        "showPassword": "Show password",
+        "hidePassword": "Hide password",
+        "Hero": {
+            "title": "Your inteligent carrer agent"
+        }
+    },
+
+    "Dashboard": {
+        "logout": "Logout"
+    },
+
+    "Validation": {
+        "invalidEmail": "Enter a valid email address.",
+        "passwordRequired": "Enter your password.",
+        "invalidFields": "Check the provided fields."
+    },
+    "Errors": {
+        "AUTH_INVALID_CREDENTIALS": "Invalid email or password.",
+        "AUTH_TOKEN_CREATION_FAILED": "Could not start your session.",
+        "API_UNAVAILABLE": "Could not connect to the API.",
+        "INVALID_API_RESPONSE": "The API returned an invalid response.",
+        "UNKNOWN": "An unexpected error occurred.",
+        "LOGOUT_FAILED": "Could not sign out. Please try again."
+    }
+}

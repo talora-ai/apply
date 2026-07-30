@@ -1,0 +1,38 @@
+{
+    "Login": {
+        "title": "Entre na sua conta",
+        "email": "E-mail",
+        "emailPlaceholder": "voce@exemplo.com",
+        "password": "Senha",
+        "passwordPlaceholder": "Digite sua senha",
+        "remember": "Lembrar de mim",
+        "forgotPassword": "Esqueci minha senha",
+        "submit": "Entrar",
+        "submitting": "Entrando...",
+        "noAccount": "Ainda não possui uma conta?",
+        "createAccount": "Criar conta",
+        "showPassword": "Mostrar senha",
+        "hidePassword": "Ocultar senha",
+        "Hero": {
+            "title": "Seu agente inteligente de carreira"
+        }
+    },
+
+    "Dashboard": {
+        "logout": "Sair"
+    },
+
+    "Validation": {
+        "invalidEmail": "Informe um e-mail válido.",
+        "passwordRequired": "Informe sua senha.",
+        "invalidFields": "Verifique os campos informados."
+    },
+    "Errors": {
+        "AUTH_INVALID_CREDENTIALS": "E-mail ou senha inválidos.",
+        "AUTH_TOKEN_CREATION_FAILED": "Não foi possível iniciar sua sessão.",
+        "API_UNAVAILABLE": "Não foi possível conectar com a API.",
+        "INVALID_API_RESPONSE": "A API retornou uma resposta inválida.",
+        "UNKNOWN": "Ocorreu um erro inesperado.",
+        "LOGOUT_FAILED": "Não foi possível sair. Tente novamente."
+    }
+}
