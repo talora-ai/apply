@@ -8,10 +8,7 @@ export type LogoutState = {
     message?: string;
 };
 
-export async function logoutAction(
-    _previousState: LogoutState,
-    _formData: FormData,
-): Promise<LogoutState> {
+export async function logoutAction(): Promise<LogoutState> {
     const errorsT = await getTranslations("Errors");
     const cookieStore = await cookies();
 

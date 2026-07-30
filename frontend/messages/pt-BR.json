@@ -14,18 +14,67 @@
         "showPassword": "Mostrar senha",
         "hidePassword": "Ocultar senha",
         "Hero": {
-            "title": "Seu agente inteligente de carreira"
+            "title": "Seu agente inteligente de carreira",
+            "subtitle": "Sua próxima oportunidade começa com uma decisão.",
+            "text": "Analyze your resume, find compatible job openings, and track your professional development, all in one place."
         }
     },
 
+    "Register": {
+        "welcome": "Comece agora",
+        "title": "Crie sua conta",
+        "description": "Dê o primeiro passo para encontrar oportunidades mais compatíveis com seu perfil.",
+        "name": "Nome",
+        "namePlaceholder": "Seu nome",
+        "lastName": "Sobrenome",
+        "lastNamePlaceholder": "Seu sobrenome",
+        "email": "E-mail",
+        "emailPlaceholder": "voce@exemplo.com",
+        "password": "Senha",
+        "passwordPlaceholder": "Crie uma senha",
+        "passwordConfirmation": "Confirmar senha",
+        "passwordConfirmationPlaceholder": "Repita sua senha",
+        "passwordHelp": "A senha deve possuir entre 8 e 32 caracteres.",
+        "termsPrefix": "Eu concordo com os",
+        "terms": "Termos de uso",
+        "and": "e a",
+        "privacy": "Política de privacidade",
+        "submit": "Criar minha conta",
+        "submitting": "Criando conta...",
+        "hasAccount": "Já possui uma conta?",
+        "login": "Entrar"
+    },
+
     "Dashboard": {
-        "logout": "Sair"
+    },
+
+    "components": {
+        "platform": {
+            "logout-button": {
+                "out": "Sair",
+                "outing": "Saindo"
+            }
+        }
     },
 
     "Validation": {
         "invalidEmail": "Informe um e-mail válido.",
         "passwordRequired": "Informe sua senha.",
-        "invalidFields": "Verifique os campos informados."
+        "invalidFields": "Verifique os campos informados.",
+        "Register": {
+            "nameMin": "O nome deve possuir pelo menos 2 caracteres.",
+            "nameMax": "O nome não pode possuir mais de 198 caracteres.",
+            "lastNameMin": "O sobrenome deve possuir pelo menos 2 caracteres.",
+            "lastNameMax": "O sobrenome não pode possuir mais de 198 caracteres.",
+            "emailInvalid": "Informe um e-mail válido.",
+            "emailMax": "O e-mail não pode possuir mais de 198 caracteres.",
+            "passwordMin": "A senha deve possuir pelo menos 8 caracteres.",
+            "passwordMax": "A senha não pode possuir mais de 32 caracteres.",
+            "passwordConfirmationRequired": "Confirme sua senha.",
+            "passwordMismatch": "As senhas não coincidem.",
+            "termsRequired": "Você precisa aceitar os termos de uso.",
+            "emailAlreadyUsed": "Este e-mail já está cadastrado."
+        }
     },
     "Errors": {
         "AUTH_INVALID_CREDENTIALS": "E-mail ou senha inválidos.",
@@ -33,6 +82,30 @@
         "API_UNAVAILABLE": "Não foi possível conectar com a API.",
         "INVALID_API_RESPONSE": "A API retornou uma resposta inválida.",
         "UNKNOWN": "Ocorreu um erro inesperado.",
-        "LOGOUT_FAILED": "Não foi possível sair. Tente novamente."
+        "LOGOUT_FAILED": "Não foi possível sair. Tente novamente.",
+        "REGISTER_INVALID_FIELDS": "Verifique os dados informados.",
+        "REGISTER_FAILED": "Não foi possível criar sua conta. Tente novamente."
+    },
+
+    "Links": {
+        "dashboard": "Visão Geral",
+        "search_jobs": "Procurar vagas",
+        "applications": "Candidaturas",
+        "resumes": "Currículos",
+        "favorites": "Favoritas",
+        "analytics": "Análises",
+        "settings": "Configurações"
+    },
+
+    "sidebar": {
+        "upgrade": {
+            "title": "Upgrade para Premium",
+            "text": "Tenha acesso a recursos exclusivos e acelere sua carreira.",
+            "upgrade_now": "Upgrade agora"
+        },
+        "welcome": "Olá",
+        "subtitle": "Acompanhe seu currículo e os resultados das sua pesquisas.",
+        "search": "Buscar",
+        "search_job": "Buscar vaga"
     }
 }

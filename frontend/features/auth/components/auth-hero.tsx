@@ -28,12 +28,11 @@ export function AuthHero() {
                 </span>
 
                 <h1 className="text-4xl font-semibold leading-tight tracking-tight xl:text-5xl">
-                    Sua próxima oportunidade começa com uma decisão.
+                    {t('subtitle')}
                 </h1>
 
                 <p className="mt-6 max-w-lg text-lg leading-8 text-slate-300">
-                    Analise seu currículo, encontre vagas compatíveis e acompanhe
-                    sua evolução profissional em um único lugar.
+                    {t('text')}
                 </p>
             </div>
 

@@ -90,7 +90,7 @@ export function TaloraAiCard() {
             ref={cardRef}
             onPointerMove={handlePointerMove}
             onPointerLeave={resetEyes}
-            className="dashboard-card ai-card panel relative flex min-h-[520px] flex-col overflow-hidden rounded-2xl border border-[#6D4AFF] shadow-[0_0_32px_rgba(109,74,255,0.18)] sm:col-span-2 xl:col-span-1 xl:col-start-5 xl:row-start-2"
+            className="dashboard-card ai-card panel relative flex min-h-130 flex-col overflow-hidden rounded-2xl border border-[#6D4AFF] shadow-[0_0_32px_rgba(109,74,255,0.18)] sm:col-span-2 xl:col-span-1 xl:col-start-5 xl:row-start-2"
             style={{
                 animationDelay: "490ms",
             }}
@@ -132,7 +132,7 @@ export function TaloraAiCard() {
             </div>
 
             <div className="relative mt-7 flex justify-center">
-                <div className="ai-core flex size-24 items-center justify-center rounded-full border-[10px] border-slate-100 bg-[#0B1020] shadow-[0_0_32px_rgba(109,74,255,0.18)]">
+                <div className="ai-core flex size-24 items-center justify-center rounded-full border-10 border-slate-100 bg-[#0B1020] shadow-[0_0_32px_rgba(109,74,255,0.18)]">
                     <span className="flex gap-3">
                         <span className="ai-eye size-3 rounded-full bg-[#15D0A5] shadow-[0_0_12px_rgba(21,208,165,0.9)]" />
 

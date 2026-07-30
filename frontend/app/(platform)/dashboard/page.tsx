@@ -160,13 +160,16 @@ const skills: Skill[] = [
 export default function DashboardPage() {
     return (
         <section className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
-            {statistics.map((statistic, index) => (
-                <StatisticCard
-                    key={statistic.title}
-                    statistic={statistic}
-                    delay={(index + 1) * 70}
-                />
-            ))}
+            
+            <div className="col-span-1 sm:col-span-2 xl:col-span-5 w-full flex gap-5">
+                {statistics.map((statistic, index) => (
+                    <StatisticCard
+                        key={statistic.title}
+                        statistic={statistic}
+                        delay={(index + 1) * 70}
+                    />
+                ))}
+            </div>
 
             <OpportunitiesCard />
 
@@ -190,7 +193,7 @@ function StatisticCard({
 
     return (
         <article
-            className="dashboard-card panel rounded-2xl border border-slate-700/70 p-5 md:col-span-6 xl:col-span-1"
+            className="dashboard-card panel flex-1 w-full rounded-2xl border border-slate-700/70 p-5"
             style={{
                 animationDelay: `${delay}ms`,
             }}
@@ -233,7 +236,7 @@ function StatisticCard({
 function OpportunitiesCard() {
     return (
         <article
-            className="dashboard-card panel flex min-h-[520px] flex-col overflow-hidden rounded-2xl border border-slate-700/70 sm:col-span-2 xl:col-span-2 xl:col-start-1 xl:row-start-2"
+            className="dashboard-card panel flex min-h-130 flex-col overflow-hidden rounded-2xl border border-slate-700/70 sm:col-span-2 xl:col-span-2 xl:col-start-1 xl:row-start-2"
             style={{
                 animationDelay: "350ms",
             }}
@@ -338,7 +341,7 @@ function OpportunityBadge({
 function SkillsCard() {
     return (
         <article
-            className="dashboard-card panel flex min-h-[520px] flex-col rounded-2xl border border-slate-700/70 sm:col-span-2 xl:col-span-2 xl:col-start-3 xl:row-start-2"
+            className="dashboard-card panel flex min-h-130 flex-col rounded-2xl border border-slate-700/70 sm:col-span-2 xl:col-span-2 xl:col-start-3 xl:row-start-2"
             style={{
                 animationDelay: "420ms",
             }}

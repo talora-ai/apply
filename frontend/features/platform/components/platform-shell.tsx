@@ -13,7 +13,6 @@ import {
     FileText,
     Heart,
     LayoutDashboard,
-    LogOut,
     Menu,
     Search,
     Settings,
@@ -30,6 +29,7 @@ import {
 } from "react";
 
 import type { AuthenticatedUser } from "@/features/auth/types/user";
+import { useTranslations } from "next-intl";
 
 type PlatformShellProps = Readonly<{
     user: AuthenticatedUser;
@@ -44,309 +44,41 @@ type NavigationItem = {
 
 const navigation: NavigationItem[] = [
     {
-        title: "Visão geral",
+        title: "dashboard",
         href: "/dashboard",
         icon: LayoutDashboard,
     },
     {
-        title: "Pesquisar vagas",
+        title: "search_jobs",
         href: "/jobs/search",
         icon: Search,
     },
     {
-        title: "Candidaturas",
+        title: "applications",
         href: "/applications",
         icon: BriefcaseBusiness,
     },
     {
-        title: "Currículos",
+        title: "resumes",
         href: "/resumes",
         icon: FileText,
     },
     {
-        title: "Favoritas",
+        title: "favorites",
         href: "/favorites",
         icon: Heart,
     },
     {
-        title: "Analytics",
+        title: "analytics",
         href: "/analytics",
         icon: ChartNoAxesColumnIncreasing,
     },
     {
-        title: "Configurações",
+        title: "settings",
         href: "/settings",
         icon: Settings,
     },
 ];
-
-export function PlatformShell({
-    user,
-    children,
-}: PlatformShellProps) {
-    const pathname = usePathname();
-
-    const [sidebarOpen, setSidebarOpen] =
-        useState(false);
-
-    const [notificationsOpen, setNotificationsOpen] =
-        useState(false);
-
-    const [profileOpen, setProfileOpen] =
-        useState(false);
-
-    useEffect(() => {
-        document.body.classList.toggle(
-            "overflow-hidden",
-            sidebarOpen,
-        );
-
-        return () => {
-            document.body.classList.remove(
-                "overflow-hidden",
-            );
-        };
-    }, [sidebarOpen]);
-
-    useEffect(() => {
-        function closeOnEscape(event: KeyboardEvent) {
-            if (event.key !== "Escape") {
-                return;
-            }
-
-            setSidebarOpen(false);
-            setNotificationsOpen(false);
-            setProfileOpen(false);
-        }
-
-        window.addEventListener(
-            "keydown",
-            closeOnEscape,
-        );
-
-        return () => {
-            window.removeEventListener(
-                "keydown",
-                closeOnEscape,
-            );
-        };
-    }, []);
-
-    const firstName =
-        user.name?.split(" ")[0] ?? "Gustavo";
-
-    const initials = getInitials(
-        user.name ?? user.email,
-    );
-
-    function closeDropdowns() {
-        setNotificationsOpen(false);
-        setProfileOpen(false);
-    }
-
-    return (
-        <div className="platform-background min-h-svh text-slate-100">
-            {sidebarOpen && (
-                <button
-                    type="button"
-                    className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden"
-                    aria-label="Fechar menu"
-                    onClick={() => setSidebarOpen(false)}
-                />
-            )}
-
-            <aside
-                className={[
-                    "fixed inset-y-0 left-0 z-50",
-                    "flex w-72 flex-col overflow-y-auto overscroll-contain",
-                    "border-r border-slate-800/90 bg-[#0B1020]",
-                    "px-4 py-5 transition-transform duration-300",
-                    "[scrollbar-color:#334155_transparent] [scrollbar-thin]",
-                    sidebarOpen
-                        ? "translate-x-0"
-                        : "-translate-x-full",
-                    "lg:translate-x-0",
-                ].join(" ")}
-                aria-label="Navegação principal"
-            >
-                <div className="flex items-center justify-between px-2">
-                    <Link
-                        href="/dashboard"
-                        className="flex items-center gap-3"
-                        aria-label="Talora Apply"
-                        onClick={() => setSidebarOpen(false)}
-                    >
-                        <Image
-                            src="/brand/talora-apply-icon.svg"
-                            alt=""
-                            width={44}
-                            height={44}
-                            priority
-                            className="size-11 shrink-0"
-                        />
-
-                        <span className="text-xl font-semibold">
-                            talora{" "}
-                            <span className="font-medium text-[#15D0A5]">
-                                apply
-                            </span>
-                        </span>
-                    </Link>
-
-                    <button
-                        type="button"
-                        className="rounded-xl p-2 text-slate-400 transition hover:bg-white/5 hover:text-white lg:hidden"
-                        aria-label="Fechar menu"
-                        onClick={() => setSidebarOpen(false)}
-                    >
-                        <X className="size-5" />
-                    </button>
-                </div>
-
-                <nav className="mt-10 space-y-2">
-                    {navigation.map((item) => (
-                        <NavigationLink
-                            key={item.href}
-                            item={item}
-                            active={
-                                pathname === item.href
-                            }
-                            onNavigate={() => {
-                                setSidebarOpen(false);
-                            }}
-                        />
-                    ))}
-                </nav>
-
-                <div className="panel mt-auto rounded-2xl border border-slate-700/70 p-5">
-                    <Sparkles className="size-6 text-[#15D0A5]" />
-
-                    <h2 className="mt-4 font-semibold">
-                        Upgrade para Premium
-                    </h2>
-
-                    <p className="mt-2 text-sm leading-6 text-slate-400">
-                        Tenha acesso a recursos exclusivos
-                        e acelere sua carreira.
-                    </p>
-
-                    <button
-                        type="button"
-                        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#15D0A5] px-4 py-3 text-sm font-semibold text-[#0B1020] transition hover:bg-emerald-300"
-                    >
-                        Upgrade agora
-                        <span aria-hidden="true">↗</span>
-                    </button>
-                </div>
-            </aside>
-
-            <main
-                className="min-h-svh lg:pl-72"
-                onClick={closeDropdowns}
-            >
-                <div className="mx-auto max-w-[1600px] px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
-                    <header className="flex items-start justify-between gap-4">
-                        <div className="flex min-w-0 items-start gap-3">
-                            <button
-                                type="button"
-                                className="mt-1 rounded-xl border border-slate-700 bg-[#161C2D] p-2.5 text-slate-200 lg:hidden"
-                                aria-label="Abrir menu"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    setSidebarOpen(true);
-                                }}
-                            >
-                                <Menu className="size-5" />
-                            </button>
-
-                            <div>
-                                <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                                    Bom dia, {firstName}!
-                                </h1>
-
-                                <p className="mt-1 text-sm text-slate-400 sm:text-base">
-                                    Acompanhe seu currículo e os
-                                    resultados das suas
-                                    pesquisas.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-                            <SearchInput className="hidden md:block" />
-
-                            <div className="relative">
-                                <button
-                                    type="button"
-                                    className="relative rounded-xl border border-slate-700 bg-[#161C2D] p-2.5 text-slate-300 transition hover:border-[#6D4AFF] hover:text-white"
-                                    aria-label="Notificações"
-                                    aria-expanded={
-                                        notificationsOpen
-                                    }
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-
-                                        setNotificationsOpen(
-                                            (current) =>
-                                                !current,
-                                        );
-
-                                        setProfileOpen(false);
-                                    }}
-                                >
-                                    <Bell className="size-5" />
-
-                                    <span className="status-dot absolute right-2 top-2 size-2 rounded-full bg-[#15D0A5]" />
-                                </button>
-
-                                {notificationsOpen && (
-                                    <NotificationsDropdown />
-                                )}
-                            </div>
-
-                            <div className="relative">
-                                <button
-                                    type="button"
-                                    className="flex items-center gap-2 rounded-full border-2 border-slate-700 bg-[#161C2D] p-1 pr-2 transition hover:border-[#6D4AFF]"
-                                    aria-label="Abrir perfil"
-                                    aria-expanded={profileOpen}
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-
-                                        setProfileOpen(
-                                            (current) =>
-                                                !current,
-                                        );
-
-                                        setNotificationsOpen(
-                                            false,
-                                        );
-                                    }}
-                                >
-                                    <span className="flex size-8 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-[#0B1020]">
-                                        {initials}
-                                    </span>
-
-                                    <ChevronDown className="hidden size-4 text-slate-400 sm:block" />
-                                </button>
-
-                                {profileOpen && (
-                                    <ProfileDropdown
-                                        user={user}
-                                    />
-                                )}
-                            </div>
-                        </div>
-                    </header>
-
-                    <SearchInput className="relative mt-5 md:hidden" />
-
-                    {children}
-                </div>
-            </main>
-        </div>
-    );
-}
 
 type NavigationLinkProps = {
     item: NavigationItem;
@@ -361,6 +93,9 @@ function NavigationLink({
 }: NavigationLinkProps) {
     const Icon = item.icon;
 
+
+    const t_link = useTranslations("Links");
+
     return (
         <Link
             href={item.href}
@@ -373,7 +108,7 @@ function NavigationLink({
             ].join(" ")}
         >
             <Icon className="size-5" />
-            {item.title}
+            {t_link(item.title)}
         </Link>
     );
 }
@@ -385,17 +120,20 @@ type SearchInputProps = {
 function SearchInput({
     className = "",
 }: SearchInputProps) {
+
+    const t = useTranslations('sidebar')
+
     return (
         <label className={`relative ${className}`}>
             <span className="sr-only">
-                Buscar
+                {t('search')}
             </span>
 
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-500" />
 
             <input
                 type="search"
-                placeholder="Buscar vagas, empresas ou habilidades"
+                placeholder={t('search_job')}
                 className="w-full rounded-xl border border-slate-700 bg-[#161C2D] py-2.5 pl-10 pr-4 text-sm outline-none transition placeholder:text-slate-500 focus:border-[#6D4AFF] md:w-72 xl:w-96"
             />
         </label>
@@ -403,6 +141,7 @@ function SearchInput({
 }
 
 function NotificationsDropdown() {
+
     return (
         <div
             className="absolute right-0 top-14 z-30 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-slate-700 bg-[#161C2D] shadow-2xl"
@@ -546,4 +285,271 @@ function getInitials(value: string): string {
         .slice(0, 2)
         .map((part) => part.charAt(0).toUpperCase())
         .join("");
+}
+
+export function PlatformShell({
+    user,
+    children,
+}: PlatformShellProps) {
+    const pathname = usePathname();
+
+    const [sidebarOpen, setSidebarOpen] =
+        useState(false);
+
+    const [notificationsOpen, setNotificationsOpen] =
+        useState(false);
+
+    const [profileOpen, setProfileOpen] =
+        useState(false);
+
+    useEffect(() => {
+        document.body.classList.toggle(
+            "overflow-hidden",
+            sidebarOpen,
+        );
+
+        return () => {
+            document.body.classList.remove(
+                "overflow-hidden",
+            );
+        };
+    }, [sidebarOpen]);
+
+    useEffect(() => {
+        function closeOnEscape(event: KeyboardEvent) {
+            if (event.key !== "Escape") {
+                return;
+            }
+
+            setSidebarOpen(false);
+            setNotificationsOpen(false);
+            setProfileOpen(false);
+        }
+
+        window.addEventListener(
+            "keydown",
+            closeOnEscape,
+        );
+
+        return () => {
+            window.removeEventListener(
+                "keydown",
+                closeOnEscape,
+            );
+        };
+    }, []);
+
+    const firstName =
+        user.name?.split(" ")[0] ?? "Gustavo";
+
+    const initials = getInitials(
+        user.name ?? user.email,
+    );
+
+    function closeDropdowns() {
+        setNotificationsOpen(false);
+        setProfileOpen(false);
+    }
+
+    const t = useTranslations('sidebar');
+
+    return (
+        <div className="platform-background min-h-svh text-slate-100">
+            {sidebarOpen && (
+                <button
+                    type="button"
+                    className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden"
+                    aria-label="Fechar menu"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
+
+            <aside
+                className={[
+                    "fixed inset-y-0 left-0 z-50",
+                    "flex w-72 flex-col overflow-y-auto overscroll-contain",
+                    "border-r border-slate-800/90 bg-[#0B1020]",
+                    "px-4 py-5 transition-transform duration-300",
+                    "[scrollbar-color:#334155_transparent] [scrollbar-thin]",
+                    sidebarOpen
+                        ? "translate-x-0"
+                        : "-translate-x-full",
+                    "lg:translate-x-0",
+                ].join(" ")}
+                aria-label="Navegação principal"
+            >
+                <div className="flex items-center justify-between px-2">
+                    <Link
+                        href="/dashboard"
+                        className="flex items-center gap-3"
+                        aria-label="Talora Apply"
+                        onClick={() => setSidebarOpen(false)}
+                    >
+                        <Image
+                            src="/brand/talora-apply-icon.svg"
+                            alt=""
+                            width={44}
+                            height={44}
+                            priority
+                            className="size-11 shrink-0"
+                        />
+
+                        <span className="text-xl font-semibold">
+                            talora{" "}
+                            <span className="font-medium text-[#15D0A5]">
+                                apply
+                            </span>
+                        </span>
+                    </Link>
+
+                    <button
+                        type="button"
+                        className="rounded-xl p-2 text-slate-400 transition hover:bg-white/5 hover:text-white lg:hidden"
+                        aria-label="Fechar menu"
+                        onClick={() => setSidebarOpen(false)}
+                    >
+                        <X className="size-5" />
+                    </button>
+                </div>
+
+                <nav className="mt-10 space-y-2">
+                    {navigation.map((item) => (
+                        <NavigationLink
+                            key={item.href}
+                            item={item}
+                            active={
+                                pathname === item.href
+                            }
+                            onNavigate={() => {
+                                setSidebarOpen(false);
+                            }}
+                        />
+                    ))}
+                </nav>
+
+                <div className="panel mt-auto rounded-2xl border border-slate-700/70 p-5">
+                    <Sparkles className="size-6 text-[#15D0A5]" />
+
+                    <h2 className="mt-4 font-semibold">
+                        {t('upgrade.title')}
+                    </h2>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-400">
+                       {t('upgrade.text')}
+                    </p>
+
+                    <button
+                        type="button"
+                        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#15D0A5] px-4 py-3 text-sm font-semibold text-[#0B1020] transition hover:bg-emerald-300"
+                    >
+                        {t('upgrade.upgrade_now')}
+                        <span aria-hidden="true">↗</span>
+                    </button>
+                </div>
+            </aside>
+
+            <main
+                className="min-h-svh lg:pl-72"
+                onClick={closeDropdowns}
+            >
+                <div className="mx-auto max-w-[1600px] px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
+                    <header className="flex items-start justify-between gap-4">
+                        <div className="flex min-w-0 items-start gap-3">
+                            <button
+                                type="button"
+                                className="mt-1 rounded-xl border border-slate-700 bg-[#161C2D] p-2.5 text-slate-200 lg:hidden"
+                                aria-label="Abrir menu"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    setSidebarOpen(true);
+                                }}
+                            >
+                                <Menu className="size-5" />
+                            </button>
+
+                            <div>
+                                <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                                    {t('welcome')}, {firstName}!
+                                </h1>
+
+                                <p className="mt-1 text-sm text-slate-400 sm:text-base">
+                                    {t('subtitle')}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+                            <SearchInput className="hidden md:block" />
+
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    className="relative rounded-xl border border-slate-700 bg-[#161C2D] p-2.5 text-slate-300 transition hover:border-[#6D4AFF] hover:text-white"
+                                    aria-label="Notificações"
+                                    aria-expanded={
+                                        notificationsOpen
+                                    }
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+
+                                        setNotificationsOpen(
+                                            (current) =>
+                                                !current,
+                                        );
+
+                                        setProfileOpen(false);
+                                    }}
+                                >
+                                    <Bell className="size-5" />
+
+                                    <span className="status-dot absolute right-2 top-2 size-2 rounded-full bg-[#15D0A5]" />
+                                </button>
+
+                                {notificationsOpen && (
+                                    <NotificationsDropdown />
+                                )}
+                            </div>
+
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    className="flex items-center gap-2 rounded-full border-2 border-slate-700 bg-[#161C2D] p-1 pr-2 transition hover:border-[#6D4AFF]"
+                                    aria-label="Abrir perfil"
+                                    aria-expanded={profileOpen}
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+
+                                        setProfileOpen(
+                                            (current) =>
+                                                !current,
+                                        );
+
+                                        setNotificationsOpen(
+                                            false,
+                                        );
+                                    }}
+                                >
+                                    <span className="flex size-8 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-[#0B1020]">
+                                        {initials}
+                                    </span>
+
+                                    <ChevronDown className="hidden size-4 text-slate-400 sm:block" />
+                                </button>
+
+                                {profileOpen && (
+                                    <ProfileDropdown
+                                        user={user}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </header>
+
+                    <SearchInput className="relative mt-5 md:hidden" />
+
+                    {children}
+                </div>
+            </main>
+        </div>
+    );
 }
