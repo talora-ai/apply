@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Símbolo Talora</title>
+
+  <defs>
+    <linearGradient id="talora-gradient" x1="18" y1="12" x2="108" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8B6CFF"/>
+      <stop offset=".48" stop-color="#6D4AFF"/>
+      <stop offset="1" stop-color="#4822C7"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(0 0) scale(1.0)">
+    <path fill="#FFFFFF" d="M64 4 106.5 28.5Q112 31.7 112 38v49q0 6.3-5.5 9.5L64 121 21.5 96.5Q16 93.3 16 87V38q0-6.3 5.5-9.5Z"/>
+    <path fill="#0B1020" d="M35 38q0-7 7-7h44q7 0 7 7v8q0 7-7 7H75v39.5L64 99 53 92.5V53H42q-7 0-7-7Z"/>
+  </g>
+</svg>
