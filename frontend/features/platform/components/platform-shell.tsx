@@ -427,10 +427,10 @@ export function PlatformShell({
                     ))}
                 </nav>
 
-                <div className="panel mt-auto rounded-2xl border border-slate-700/70 p-5">
-                    <Sparkles className="size-6 text-[#15D0A5]" />
-
-                    <h2 className="mt-4 font-semibold">
+                <div className="panel mt-auto md:mt-15 rounded-2xl border border-slate-700/70 p-5">
+                    
+                    <h2 className="font-semibold flex gap-2">
+                        <Sparkles className="size-6 text-[#15D0A5]" />
                         {t('upgrade.title')}
                     </h2>
 

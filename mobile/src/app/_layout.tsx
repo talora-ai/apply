@@ -1,18 +1,57 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import {
+    useEffect,
+    useState,
+} from "react";
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import "@/i18n";
 
-SplashScreen.preventAutoHideAsync();
+import { loadStoredLanguage } from "@/i18n";
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
-  );
+void SplashScreen.preventAutoHideAsync();
+
+export default function RootLayout() {
+    const [applicationReady, setApplicationReady] =
+        useState(false);
+
+    useEffect(() => {
+        async function prepareApplication() {
+            try {
+                await loadStoredLanguage();
+            } catch (error) {
+                console.error(
+                    "Failed to initialize application:",
+                    error,
+                );
+            } finally {
+                setApplicationReady(true);
+
+                await SplashScreen.hideAsync();
+            }
+        }
+
+        void prepareApplication();
+    }, []);
+
+    if (!applicationReady) {
+        return null;
+    }
+
+    return (
+        <>
+            <StatusBar style="light" />
+
+            <Stack
+                screenOptions={{
+                    headerShown: false,
+                    contentStyle: {
+                        backgroundColor: "#0B1020",
+                    },
+                    animation: "fade",
+                }}
+            />
+        </>
+    );
 }

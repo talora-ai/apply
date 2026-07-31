@@ -1,0 +1,111 @@
+{
+    "common": {
+        "loading": "Carregando...",
+        "tryAgain": "Tentar novamente",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar",
+        "success": "Sucesso",
+        "error": "Erro",
+        "login": "Fazer login",
+        "seeAll": "Ver todas"
+    },
+    "login": {
+        "welcome": "Bem-vindo de volta",
+        "title": "Entre na sua conta",
+        "description": "Continue sua jornada profissional com a Talora.",
+        "email": "E-mail",
+        "emailPlaceholder": "voce@exemplo.com",
+        "password": "Senha",
+        "passwordPlaceholder": "Digite sua senha",
+        "remember": "Lembrar de mim",
+        "forgotPassword": "Esqueci minha senha",
+        "submit": "Entrar",
+        "submitting": "Entrando...",
+        "noAccount": "Ainda não possui uma conta?",
+        "createAccount": "Criar conta",
+        "showPassword": "Mostrar",
+        "hidePassword": "Ocultar"
+    },
+    "register": {
+        "welcome": "Comece agora",
+        "title": "Crie sua conta",
+        "description": "Dê o primeiro passo para encontrar oportunidades mais compatíveis com seu perfil.",
+        "name": "Nome",
+        "namePlaceholder": "Seu nome",
+        "lastName": "Sobrenome",
+        "lastNamePlaceholder": "Seu sobrenome",
+        "email": "E-mail",
+        "emailPlaceholder": "voce@exemplo.com",
+        "password": "Senha",
+        "passwordPlaceholder": "Crie uma senha",
+        "passwordConfirmation": "Confirmar senha",
+        "passwordConfirmationPlaceholder": "Repita sua senha",
+        "passwordHelp": "A senha deve possuir entre 8 e 32 caracteres.",
+        "termsPrefix": "Eu concordo com os",
+        "terms": "Termos de uso",
+        "and": "e a",
+        "privacy": "Política de privacidade",
+        "submit": "Criar minha conta",
+        "submitting": "Criando conta...",
+        "hasAccount": "Já possui uma conta?",
+        "login": "Entrar",
+        "success": "Cadastro realizado com sucesso. Agora faça o login para acessar sua conta."
+    },
+    "dashboard": {
+        "greeting": "Olá! 👋",
+        "title": "Seu próximo passo começa aqui.",
+        "subtitle": "Acompanhe seu currículo, suas candidaturas e as melhores oportunidades para o seu perfil.",
+        "searchPlaceholder": "Buscar vagas, empresas ou habilidades",
+        "statistics": {
+            "jobsFound": "Vagas encontradas",
+            "compatibility": "Compatibilidade média",
+            "applications": "Candidaturas",
+            "lastSearch": "Última pesquisa",
+            "today": "Hoje"
+        },
+        "jobs": {
+            "title": "Vagas recomendadas",
+            "subtitle": "Selecionadas para o seu perfil",
+            "remote": "Remoto",
+            "compatibility": "compatibilidade"
+        },
+        "skills": {
+            "title": "Compatibilidade por habilidade",
+            "subtitle": "Com base no seu currículo"
+        },
+        "ai": {
+            "online": "Analisando seu perfil em tempo real",
+            "analysisTitle": "Analisei seu currículo",
+            "analysisDescription": "Encontrei uma forte compatibilidade com oportunidades de desenvolvimento backend.",
+            "action": "Ver análise completa"
+        }
+    },
+    "navigation": {
+        "home": "Início",
+        "search": "Buscar",
+        "resumes": "Currículos",
+        "profile": "Perfil"
+    },
+    "validation": {
+        "invalidFields": "Verifique os campos informados.",
+        "nameMin": "O nome deve possuir pelo menos 2 caracteres.",
+        "lastNameMin": "O sobrenome deve possuir pelo menos 2 caracteres.",
+        "emailInvalid": "Informe um e-mail válido.",
+        "passwordRequired": "Informe sua senha.",
+        "passwordMin": "A senha deve possuir pelo menos 8 caracteres.",
+        "passwordMax": "A senha não pode possuir mais de 32 caracteres.",
+        "passwordConfirmationRequired": "Confirme sua senha.",
+        "passwordMismatch": "As senhas não coincidem.",
+        "termsRequired": "Você precisa aceitar os termos de uso."
+    },
+    "errors": {
+        "invalidCredentials": "E-mail ou senha inválidos.",
+        "emailAlreadyUsed": "Este e-mail já está cadastrado.",
+        "apiUnavailable": "Não foi possível conectar com a API.",
+        "connection": "Não foi possível conectar com a API.",
+        "loginFailed": "Não foi possível entrar. Tente novamente.",
+        "registerFailed": "Não foi possível criar sua conta.",
+        "logoutFailed": "Não foi possível sair. Tente novamente.",
+        "unexpected": "Ocorreu um erro inesperado."
+    }
+}
