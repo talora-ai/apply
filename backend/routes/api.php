@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Auth\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,6 @@ Route::prefix('auth')->group(function () {
     Route::post('/forgot-password', ForgotPasswordController::class)
         ->middleware('throttle:5,1');
 
-    Route::post('/reset-password', ForgotPasswordController::class)
+    Route::post('/reset-password', ResetPasswordController::class)
         ->middleware('throttle:5,1');
 });
