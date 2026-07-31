@@ -1,0 +1,30 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ rootNamespace }}Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Helpers\ResponseApi;
+use Exception;
+
+class {{ class }} extends Controller
+{
+    /**
+     * Handle the incoming request.
+     */
+    public function __invoke(Request $request)
+    {
+        try{
+            
+            //
+            
+        }catch(Exception $exception){
+            
+            return ResponseApi::error($exception->getMessage(), [
+                'class' => __CLASS__,
+                'exception' => $exception
+            ], 500);
+
+        }
+    }
+}

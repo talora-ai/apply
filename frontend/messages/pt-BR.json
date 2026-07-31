@@ -1,0 +1,159 @@
+{
+    "Login": {
+        "title": "Entre na sua conta",
+        "email": "E-mail",
+        "emailPlaceholder": "voce@exemplo.com",
+        "password": "Senha",
+        "passwordPlaceholder": "Digite sua senha",
+        "remember": "Lembrar de mim",
+        "forgotPassword": "Esqueci minha senha",
+        "submit": "Entrar",
+        "submitting": "Entrando...",
+        "noAccount": "Ainda não possui uma conta?",
+        "createAccount": "Criar conta",
+        "showPassword": "Mostrar senha",
+        "hidePassword": "Ocultar senha",
+        "Hero": {
+            "title": "Seu agente inteligente de carreira",
+            "subtitle": "Sua próxima oportunidade começa com uma decisão.",
+            "text": "Analyze your resume, find compatible job openings, and track your professional development, all in one place."
+        }
+    },
+
+    "Register": {
+        "welcome": "Comece agora",
+        "title": "Crie sua conta",
+        "description": "Dê o primeiro passo para encontrar oportunidades mais compatíveis com seu perfil.",
+        "name": "Nome",
+        "namePlaceholder": "Seu nome",
+        "lastName": "Sobrenome",
+        "lastNamePlaceholder": "Seu sobrenome",
+        "email": "E-mail",
+        "emailPlaceholder": "voce@exemplo.com",
+        "password": "Senha",
+        "passwordPlaceholder": "Crie uma senha",
+        "passwordConfirmation": "Confirmar senha",
+        "passwordConfirmationPlaceholder": "Repita sua senha",
+        "passwordHelp": "A senha deve possuir entre 8 e 32 caracteres.",
+        "termsPrefix": "Eu concordo com os",
+        "terms": "Termos de uso",
+        "and": "e a",
+        "privacy": "Política de privacidade",
+        "submit": "Criar minha conta",
+        "submitting": "Criando conta...",
+        "hasAccount": "Já possui uma conta?",
+        "login": "Entrar"
+    },
+
+    "Dashboard": {
+    },
+
+    "forgotPassword": {
+        "title": "Recuperar senha",
+        "description": "Informe seu e-mail para receber as instruções de recuperação.",
+        "email": "E-mail",
+        "emailPlaceholder": "Digite seu e-mail",
+        "submit": "Enviar instruções",
+        "submitting": "Enviando...",
+        "backToLogin": "Voltar para o login",
+        "success": "Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.",
+        "validationError": "Verifique os dados informados.",
+        "connectionError": "Não foi possível conectar com a API.",
+        "apiNotConfigured": "A URL da API não está configurada.",
+        "unexpectedError": "Não foi possível enviar as instruções de recuperação.",
+        "redirecting": "Você será redirecionado para o login."
+    },
+
+    "components": {
+        "platform": {
+            "logout-button": {
+                "out": "Sair",
+                "outing": "Saindo"
+            }
+        }
+    },
+    "resetPassword": {
+        "title": "Redefinir senha",
+        "description": "Crie uma nova senha para acessar sua conta.",
+        "password": "Nova senha",
+        "passwordPlaceholder": "Digite sua nova senha",
+        "passwordConfirmation": "Confirme a nova senha",
+        "passwordConfirmationPlaceholder": "Digite novamente sua nova senha",
+        "submit": "Redefinir senha",
+        "submitting": "Redefinindo...",
+        "success": "Sua senha foi redefinida com sucesso.",
+        "redirecting": "Você será redirecionado para o login.",
+        "invalidLink": "O link de recuperação é inválido ou está incompleto.",
+        "expiredToken": "O link de recuperação é inválido ou expirou.",
+        "validationError": "Verifique os dados informados.",
+        "connectionError": "Não foi possível conectar com a API.",
+        "apiNotConfigured": "A URL da API não está configurada.",
+        "unexpectedError": "Não foi possível redefinir sua senha.",
+        "backToLogin": "Voltar para o login"
+    },
+
+    "Validation": {
+        "invalidEmail": "Informe um e-mail válido.",
+        "passwordRequired": "Informe sua senha.",
+        "invalidFields": "Verifique os campos informados.",
+        "email": {
+            "required": "Informe seu e-mail.",
+            "invalid": "Informe um endereço de e-mail válido."
+        },
+        "Register": {
+            "nameMin": "O nome deve possuir pelo menos 2 caracteres.",
+            "nameMax": "O nome não pode possuir mais de 198 caracteres.",
+            "lastNameMin": "O sobrenome deve possuir pelo menos 2 caracteres.",
+            "lastNameMax": "O sobrenome não pode possuir mais de 198 caracteres.",
+            "emailInvalid": "Informe um e-mail válido.",
+            "emailMax": "O e-mail não pode possuir mais de 198 caracteres.",
+            "passwordMin": "A senha deve possuir pelo menos 8 caracteres.",
+            "passwordMax": "A senha não pode possuir mais de 32 caracteres.",
+            "passwordConfirmationRequired": "Confirme sua senha.",
+            "passwordMismatch": "As senhas não coincidem.",
+            "termsRequired": "Você precisa aceitar os termos de uso.",
+            "emailAlreadyUsed": "Este e-mail já está cadastrado."
+        },
+        "password": {
+            "required": "Informe a nova senha.",
+            "min": "A senha deve possuir pelo menos 8 caracteres.",
+            "max": "A senha deve possuir no máximo 32 caracteres."
+        },
+        "passwordConfirmation": {
+            "required": "Confirme a nova senha.",
+            "mismatch": "As senhas não são iguais."
+        }
+    },
+    "Errors": {
+        "AUTH_INVALID_CREDENTIALS": "E-mail ou senha inválidos.",
+        "AUTH_TOKEN_CREATION_FAILED": "Não foi possível iniciar sua sessão.",
+        "API_UNAVAILABLE": "Não foi possível conectar com a API.",
+        "INVALID_API_RESPONSE": "A API retornou uma resposta inválida.",
+        "UNKNOWN": "Ocorreu um erro inesperado.",
+        "LOGOUT_FAILED": "Não foi possível sair. Tente novamente.",
+        "REGISTER_INVALID_FIELDS": "Verifique os dados informados.",
+        "REGISTER_FAILED": "Não foi possível criar sua conta. Tente novamente."
+    },
+
+    "Links": {
+        "dashboard": "Visão Geral",
+        "search_jobs": "Procurar vagas",
+        "applications": "Candidaturas",
+        "resumes": "Currículos",
+        "favorites": "Favoritas",
+        "analytics": "Análises",
+        "settings": "Configurações"
+    },
+
+    "sidebar": {
+        "upgrade": {
+            "title": "Upgrade para Premium",
+            "text": "Tenha acesso a recursos exclusivos e acelere sua carreira.",
+            "upgrade_now": "Upgrade agora"
+        },
+        "welcome": "Olá",
+        "subtitle": "Acompanhe seu currículo e os resultados das sua pesquisas.",
+        "search": "Buscar",
+        "search_job": "Buscar vaga"
+    }
+}

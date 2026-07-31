@@ -1,0 +1,19 @@
+:root {
+  --talora-brand-purple-500: #6D4AFF;
+  --talora-brand-purple-600: #5B35E8;
+  --talora-brand-purple-700: #4822C7;
+  --talora-brand-violet-400: #8B6CFF;
+  --talora-brand-apply: #15D0A5;
+  --talora-brand-apply-dark: #0FAF8B;
+  --talora-neutral-ink: #0B1020;
+  --talora-neutral-surface: #161C2D;
+  --talora-neutral-surface-2: #1E263A;
+  --talora-neutral-muted: #64748B;
+  --talora-neutral-muted-light: #94A3B8;
+  --talora-neutral-canvas: #F1F5F9;
+  --talora-neutral-white: #FFFFFF;
+  --talora-semantic-success: #15D0A5;
+  --talora-semantic-warning: #F59E0B;
+  --talora-semantic-danger: #EF4444;
+  --talora-semantic-info: #3B82F6;
+}

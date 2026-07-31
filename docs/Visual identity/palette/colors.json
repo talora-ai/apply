@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "purple_500": "#6D4AFF",
+    "purple_600": "#5B35E8",
+    "purple_700": "#4822C7",
+    "violet_400": "#8B6CFF",
+    "apply": "#15D0A5",
+    "apply_dark": "#0FAF8B"
+  },
+  "neutral": {
+    "ink": "#0B1020",
+    "surface": "#161C2D",
+    "surface_2": "#1E263A",
+    "muted": "#64748B",
+    "muted_light": "#94A3B8",
+    "canvas": "#F1F5F9",
+    "white": "#FFFFFF"
+  },
+  "semantic": {
+    "success": "#15D0A5",
+    "warning": "#F59E0B",
+    "danger": "#EF4444",
+    "info": "#3B82F6"
+  }
+}
