@@ -1,58 +1,204 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Talora Apply — Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The backend API for **Talora Apply**, an intelligent career platform that helps users process their resumes, discover compatible job opportunities, and apply to public job listings that do not require external authentication.
 
-## About Laravel
+The API is responsible for authentication, user data, resume processing workflows, job data, applications, notifications, and orchestration between the automation bot and AI services.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Technology stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP
+- Laravel 13
+- Laravel Sanctum
+- MySQL
+- Laravel Mail with Markdown templates
+- Mailpit for local email testing
+- Laravel queues
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Current features
 
-## Learning Laravel
+- User registration
+- Authentication with Sanctum personal access tokens
+- Authenticated user retrieval
+- Logout and token revocation
+- Forgot-password flow
+- Password reset with token validation
+- Welcome and password recovery emails
+- Web and Mobile password-reset destinations
+- Standardized JSON API responses
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Requirements
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP compatible with Laravel 13
+- Composer
+- MySQL
+- PHP extensions required by Laravel
+- Mailpit, Docker, or another SMTP server
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Installation
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Create the environment file:
 
-## Contributing
+```bash
+cp .env.example .env
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Generate the application key:
 
-## Code of Conduct
+```bash
+php artisan key:generate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Configure the database in `.env`:
 
-## Security Vulnerabilities
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=talora_apply
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Run the migrations:
+
+```bash
+php artisan migrate
+```
+
+## Local email configuration
+
+For Mailpit running on the host machine:
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_SCHEME=null
+MAIL_HOST=127.0.0.1
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_FROM_ADDRESS="no-reply@talora.local"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+Mailpit web interface:
+
+```text
+http://localhost:8025
+```
+
+When both Laravel and Mailpit run in the same Docker Compose network, use:
+
+```dotenv
+MAIL_HOST=mailpit
+```
+
+## Application URLs
+
+Configure the destinations used in password recovery emails:
+
+```dotenv
+FRONTEND_URL=http://localhost:3000
+MOBILE_URL=talora-apply://reset-password
+```
+
+The backend selects the reset destination from the trusted client identifier:
+
+- `web`: opens the Next.js application;
+- `mobile`: opens the Talora Apply application through its deep link.
+
+The API must never accept an arbitrary reset URL from a request.
+
+## Queue configuration
+
+For immediate execution during local development:
+
+```dotenv
+QUEUE_CONNECTION=sync
+```
+
+For an asynchronous queue:
+
+```bash
+php artisan queue:work
+```
+
+## Running the application
+
+```bash
+php artisan serve
+```
+
+Default local API URL:
+
+```text
+http://127.0.0.1:8000/api
+```
+
+## Authentication endpoints
+
+| Method | Endpoint | Authentication | Description |
+| --- | --- | --- | --- |
+| `POST` | `/api/auth/register` | Public | Creates a user account |
+| `POST` | `/api/auth/login` | Public | Creates a Sanctum token |
+| `POST` | `/api/auth/forgot-password` | Public | Sends password recovery instructions |
+| `POST` | `/api/auth/reset-password` | Public | Resets a password using a valid token |
+| `POST` | `/api/auth/logout` | Bearer token | Revokes the active token |
+| `GET` | `/api/user` | Bearer token | Returns the authenticated user |
+
+## Password recovery security
+
+- Forgot-password responses must not reveal whether an email exists.
+- Reset tokens are single-use and expire according to the password broker configuration.
+- Existing Sanctum tokens are revoked after a successful password reset.
+- Passwords are hashed using Laravel's configured hashing driver.
+- Reset destinations are controlled by backend configuration.
+
+## Code quality
+
+Format the code:
+
+```bash
+./vendor/bin/pint
+```
+
+Run automated tests:
+
+```bash
+php artisan test
+```
+
+Clear application caches after configuration changes:
+
+```bash
+php artisan optimize:clear
+```
+
+## Planned responsibilities
+
+- Resume upload and secure file storage
+- Resume processing status
+- Candidate profile modeling
+- Job ingestion from public sources
+- Candidate-to-job compatibility scores
+- Application automation orchestration
+- AI-assisted resume feedback and opportunity analysis
+- Realtime and push notifications
+- Audit logs and application history
+
+## Development workflow
+
+1. Create or select the related GitHub issue.
+2. Assign it to the current Sprint.
+3. Create a focused branch.
+4. Implement and test the change.
+5. Run Pint and the test suite.
+6. Open a pull request using the repository template.
+7. Link the issue with `Closes #<issue-number>`.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+License information will be defined before the first public release.

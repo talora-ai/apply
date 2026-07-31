@@ -250,7 +250,7 @@ export function ResetPasswordForm({
                     }
                     className={[
                         "flex w-full items-center justify-center rounded-xl",
-                        "bg-gradient-to-r from-fuchsia-600 to-violet-600",
+                        "bg-linear-to-r from-fuchsia-600 to-violet-600",
                         "px-5 py-3 font-semibold text-white transition",
                         "hover:from-fuchsia-500 hover:to-violet-500",
                         "focus:outline-none focus:ring-2 focus:ring-fuchsia-500/50",
