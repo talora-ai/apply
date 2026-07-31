@@ -48,6 +48,22 @@
     "Dashboard": {
     },
 
+    "forgotPassword": {
+        "title": "Recover password",
+        "description": "Enter your email to receive password recovery instructions.",
+        "email": "Email",
+        "emailPlaceholder": "Enter your email",
+        "submit": "Send instructions",
+        "submitting": "Sending...",
+        "backToLogin": "Back to login",
+        "success": "If the email is registered, you will receive password reset instructions.",
+        "validationError": "Check the provided information.",
+        "connectionError": "Unable to connect to the API.",
+        "apiNotConfigured": "The API URL is not configured.",
+        "unexpectedError": "Unable to send password recovery instructions.",
+        "redirecting": "You will be redirected to the login page."
+    },
+
     "Components": {
         "Platform": {
             "Logout_Button": {
@@ -57,10 +73,34 @@
         }
     },
 
+    "resetPassword": {
+        "title": "Reset password",
+        "description": "Create a new password to access your account.",
+        "password": "New password",
+        "passwordPlaceholder": "Enter your new password",
+        "passwordConfirmation": "Confirm new password",
+        "passwordConfirmationPlaceholder": "Enter your new password again",
+        "submit": "Reset password",
+        "submitting": "Resetting...",
+        "success": "Your password has been reset successfully.",
+        "redirecting": "You will be redirected to the login page.",
+        "invalidLink": "The password recovery link is invalid or incomplete.",
+        "expiredToken": "The password recovery link is invalid or has expired.",
+        "validationError": "Check the provided information.",
+        "connectionError": "Unable to connect to the API.",
+        "apiNotConfigured": "The API URL is not configured.",
+        "unexpectedError": "Unable to reset your password.",
+        "backToLogin": "Back to login"
+    },
+
     "Validation": {
         "invalidEmail": "Enter a valid email address.",
         "passwordRequired": "Enter your password.",
         "invalidFields": "Check the provided fields.",
+        "email": {
+            "required": "Enter your email.",
+            "invalid": "Enter a valid email address."
+        },
         "Register": {
             "nameMin": "First name must contain at least 2 characters.",
             "nameMax": "First name cannot contain more than 198 characters.",
@@ -74,6 +114,15 @@
             "passwordMismatch": "Passwords do not match.",
             "termsRequired": "You must accept the terms of use.",
             "emailAlreadyUsed": "This email address is already registered."
+        },
+        "password": {
+            "required": "Enter your new password.",
+            "min": "The password must contain at least 8 characters.",
+            "max": "The password must contain no more than 32 characters."
+        },
+        "passwordConfirmation": {
+            "required": "Confirm your new password.",
+            "mismatch": "The passwords do not match."
         }
     },
 

@@ -48,6 +48,22 @@
     "Dashboard": {
     },
 
+    "forgotPassword": {
+        "title": "Recuperar senha",
+        "description": "Informe seu e-mail para receber as instruções de recuperação.",
+        "email": "E-mail",
+        "emailPlaceholder": "Digite seu e-mail",
+        "submit": "Enviar instruções",
+        "submitting": "Enviando...",
+        "backToLogin": "Voltar para o login",
+        "success": "Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.",
+        "validationError": "Verifique os dados informados.",
+        "connectionError": "Não foi possível conectar com a API.",
+        "apiNotConfigured": "A URL da API não está configurada.",
+        "unexpectedError": "Não foi possível enviar as instruções de recuperação.",
+        "redirecting": "Você será redirecionado para o login."
+    },
+
     "components": {
         "platform": {
             "logout-button": {
@@ -56,11 +72,34 @@
             }
         }
     },
+    "resetPassword": {
+        "title": "Redefinir senha",
+        "description": "Crie uma nova senha para acessar sua conta.",
+        "password": "Nova senha",
+        "passwordPlaceholder": "Digite sua nova senha",
+        "passwordConfirmation": "Confirme a nova senha",
+        "passwordConfirmationPlaceholder": "Digite novamente sua nova senha",
+        "submit": "Redefinir senha",
+        "submitting": "Redefinindo...",
+        "success": "Sua senha foi redefinida com sucesso.",
+        "redirecting": "Você será redirecionado para o login.",
+        "invalidLink": "O link de recuperação é inválido ou está incompleto.",
+        "expiredToken": "O link de recuperação é inválido ou expirou.",
+        "validationError": "Verifique os dados informados.",
+        "connectionError": "Não foi possível conectar com a API.",
+        "apiNotConfigured": "A URL da API não está configurada.",
+        "unexpectedError": "Não foi possível redefinir sua senha.",
+        "backToLogin": "Voltar para o login"
+    },
 
     "Validation": {
         "invalidEmail": "Informe um e-mail válido.",
         "passwordRequired": "Informe sua senha.",
         "invalidFields": "Verifique os campos informados.",
+        "email": {
+            "required": "Informe seu e-mail.",
+            "invalid": "Informe um endereço de e-mail válido."
+        },
         "Register": {
             "nameMin": "O nome deve possuir pelo menos 2 caracteres.",
             "nameMax": "O nome não pode possuir mais de 198 caracteres.",
@@ -74,6 +113,15 @@
             "passwordMismatch": "As senhas não coincidem.",
             "termsRequired": "Você precisa aceitar os termos de uso.",
             "emailAlreadyUsed": "Este e-mail já está cadastrado."
+        },
+        "password": {
+            "required": "Informe a nova senha.",
+            "min": "A senha deve possuir pelo menos 8 caracteres.",
+            "max": "A senha deve possuir no máximo 32 caracteres."
+        },
+        "passwordConfirmation": {
+            "required": "Confirme a nova senha.",
+            "mismatch": "As senhas não são iguais."
         }
     },
     "Errors": {

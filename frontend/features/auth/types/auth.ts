@@ -17,3 +17,38 @@ export type LoginApiResponse = {
         message?: string;
     };
 };
+
+export type ForgotPasswordState = {
+    success: boolean;
+    message?: string;
+    errors?: {
+        email?: string[];
+    };
+};
+
+export type ForgotPasswordApiResponse = {
+    success?: boolean;
+    message?: string;
+    data?: {
+        message?: string;
+    };
+};
+
+export type ResetPasswordState = {
+    success: boolean;
+    message?: string;
+    errors?: {
+        email?: string[];
+        token?: string[];
+        password?: string[];
+        passwordConfirmation?: string[];
+    };
+};
+
+export type ResetPasswordApiResponse = {
+    success?: boolean;
+    message?: string;
+    data?: {
+        message?: string;
+    };
+};
