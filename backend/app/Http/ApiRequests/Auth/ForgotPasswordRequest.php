@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\ApiRequests\Auth;
 
 use App\Http\ApiRequests\CustomRequest;
+use Illuminate\Validation\Rule;
 
 class ForgotPasswordRequest extends CustomRequest
 {
@@ -26,6 +27,14 @@ class ForgotPasswordRequest extends CustomRequest
                 'string',
                 'email',
                 'max:198',
+            ],
+            'client' => [
+                'sometimes',
+                'string',
+                Rule::in([
+                    'web',
+                    'mobile',
+                ]),
             ],
         ];
     }

@@ -110,7 +110,7 @@ Cada aplicação é independente e possui suas próprias dependências e configu
 
 - [`architecture.md`](architecture.md): arquitetura, componentes, integrações e fluxos técnicos.
 - [`requirements.md`](requirements.md): regras de negócio e requisitos funcionais e não funcionais.
-- `Talora-Apply-Documentacao-Tecnica.md`: visão técnica ampliada do produto.
+- [`Talora-Apply-Documentacao-Tecnica.md`](Talora-Apply-Documentacao-Tecnica.md): visão técnica ampliada do produto.
 
 ## Princípios do projeto
 

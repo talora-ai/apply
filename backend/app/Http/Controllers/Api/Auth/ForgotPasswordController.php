@@ -29,10 +29,19 @@ class ForgotPasswordController extends Controller
             if ($user) {
                 $token = Password::broker()->createToken($user);
 
-                $resetUrl = $this->createResetUrl(
-                    token: $token,
-                    email: $email,
-                );
+                $client = $request->string('client')->toString();
+
+                $resetBaseUrl = match ($client) {
+                    'mobile' => config('services.mobile.url') . '://',
+                    default => config('services.frontend.url') . '/',
+                };
+
+                $resetUrl = $resetBaseUrl . 'reset-password'
+                    . '?'
+                    . http_build_query([
+                        'token' => $token,
+                        'email' => $user->email,
+                    ]);
 
                 Mail::to($user->email)->queue(
                     new ForgotPasswordMail(

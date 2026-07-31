@@ -27,6 +27,7 @@
     "register": {
         "welcome": "Get started",
         "title": "Create your account",
+        "subtitle": "",
         "description": "Take the first step toward finding opportunities that match your profile.",
         "name": "First name",
         "namePlaceholder": "Your first name",
@@ -49,7 +50,9 @@
         "login": "Sign in",
         "showPassword": "Show",
         "hidePassword": "Hide",
-        "success": "Registration completed successfully. Now sign in to access your account."
+        "success": "Registration completed successfully. Now sign in to access your account.",
+        "acceptTerms": "I read and accept terms of use and privacity.",
+        "alreadyHaveAccount": "I already have account"
     },
     "dashboard": {
         "greeting": "Hello! 👋",
@@ -107,5 +110,35 @@
         "registerFailed": "Could not create your account.",
         "logoutFailed": "Could not sign out. Please try again.",
         "unexpected": "An unexpected error occurred."
+    },
+    "forgotPassword": {
+        "welcome": "Account recovery",
+        "title": "Forgot your password?",
+        "description": "Enter your email and we will send you instructions to create a new password.",
+        "email": "Email",
+        "emailPlaceholder": "you@example.com",
+        "submit": "Send instructions",
+        "submitting": "Sending...",
+        "success": "If the email is registered, password recovery instructions have been sent.",
+        "redirecting": "Returning to the login page...",
+        "backToLogin": "Back to login"
+    },
+    "resetPassword": {
+        "welcome": "Create a new password",
+        "title": "Reset your password",
+        "description": "Choose a new secure password to access your account.",
+        "password": "New password",
+        "passwordPlaceholder": "Enter your new password",
+        "passwordConfirmation": "Confirm new password",
+        "passwordConfirmationPlaceholder": "Repeat your new password",
+        "showPassword": "Show",
+        "hidePassword": "Hide",
+        "submit": "Reset password",
+        "submitting": "Resetting...",
+        "success": "Your password has been reset successfully.",
+        "redirecting": "Returning to the login page...",
+        "invalidLink": "This password recovery link is invalid or incomplete.",
+        "expiredLink": "This password recovery link is invalid or has expired.",
+        "backToLogin": "Back to login"
     }
 }

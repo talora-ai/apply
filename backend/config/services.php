@@ -20,6 +20,11 @@ return [
         'url' => env('FRONTEND_URL', 'http://localhost:3000'),
     ],
 
+    'mobile' => [
+        // Eg: talora-apply
+        'url' => env('MOBILE_URL', 'talora-apply://'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

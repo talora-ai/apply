@@ -29,6 +29,7 @@
     "register": {
         "welcome": "Comece agora",
         "title": "Crie sua conta",
+        "subtitle": "",
         "description": "Dê o primeiro passo para encontrar oportunidades mais compatíveis com seu perfil.",
         "name": "Nome",
         "namePlaceholder": "Seu nome",
@@ -49,7 +50,9 @@
         "submitting": "Criando conta...",
         "hasAccount": "Já possui uma conta?",
         "login": "Entrar",
-        "success": "Cadastro realizado com sucesso. Agora faça o login para acessar sua conta."
+        "success": "Cadastro realizado com sucesso. Agora faça o login para acessar sua conta.",
+        "acceptTerms": "Li e aceito os termos de uso e privacidade.",
+        "alreadyHaveAccount": "Já possuo uma conta"
     },
     "dashboard": {
         "greeting": "Olá! 👋",
@@ -107,5 +110,35 @@
         "registerFailed": "Não foi possível criar sua conta.",
         "logoutFailed": "Não foi possível sair. Tente novamente.",
         "unexpected": "Ocorreu um erro inesperado."
+    },
+    "forgotPassword": {
+        "welcome": "Recuperação de conta",
+        "title": "Esqueceu sua senha?",
+        "description": "Informe seu e-mail e enviaremos as instruções para criar uma nova senha.",
+        "email": "E-mail",
+        "emailPlaceholder": "voce@exemplo.com",
+        "submit": "Enviar instruções",
+        "submitting": "Enviando...",
+        "success": "Se o e-mail estiver cadastrado, as instruções para recuperação da senha foram enviadas.",
+        "redirecting": "Retornando para a tela de login...",
+        "backToLogin": "Voltar para o login"
+    },
+    "resetPassword": {
+        "welcome": "Crie uma nova senha",
+        "title": "Redefina sua senha",
+        "description": "Escolha uma nova senha segura para acessar sua conta.",
+        "password": "Nova senha",
+        "passwordPlaceholder": "Digite sua nova senha",
+        "passwordConfirmation": "Confirmar nova senha",
+        "passwordConfirmationPlaceholder": "Repita sua nova senha",
+        "showPassword": "Mostrar",
+        "hidePassword": "Ocultar",
+        "submit": "Redefinir senha",
+        "submitting": "Redefinindo...",
+        "success": "Sua senha foi redefinida com sucesso.",
+        "redirecting": "Retornando para o login...",
+        "invalidLink": "Este link de recuperação é inválido ou está incompleto.",
+        "expiredLink": "Este link de recuperação é inválido ou expirou.",
+        "backToLogin": "Voltar para o login"
     }
 }

@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Talora Apply",
+    "slug": "Talora Apply",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mobile",
+    "scheme": "talora-apply",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -18,7 +18,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.taloraai.mobile"
+      "package": "com.taloraapply.mobile"
     },
     "web": {
       "output": "static",
