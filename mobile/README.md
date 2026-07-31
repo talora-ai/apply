@@ -1,56 +1,250 @@
-# Welcome to your Expo app 👋
+# Talora Apply — Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+The Android and iOS application for **Talora Apply**, an intelligent career platform that helps users manage their resumes, discover compatible jobs, and follow automated applications from a mobile device.
 
-## Get started
+The Mobile application consumes the Laravel API and shares the same product rules and visual identity as the Talora Apply web application.
 
-1. Install dependencies
+## Technology stack
 
-   ```bash
-   npm install
-   ```
+- React Native
+- Expo
+- Expo Router
+- TypeScript
+- react-i18next
+- expo-localization
+- expo-secure-store
 
-2. Start the app
+## Current features
 
-   ```bash
-   npx expo start
-   ```
+- Login
+- User registration
+- Initial dashboard
+- Forgot-password flow
+- Password reset
+- Portuguese and English translations
+- Shared API client
+- Secure authentication token storage
+- Expo Router typed routes
+- Password recovery deep-link preparation
 
-In the output, you'll find options to open the app in a
+## Requirements
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js
+- npm
+- Expo-compatible Android or iOS environment
+- Talora Apply Backend available on the local network or remotely
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Installation
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Create the environment file:
 
-### Other setup steps
+```bash
+cp .env.example .env
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Configure the API URL:
 
-## Learn more
+```dotenv
+EXPO_PUBLIC_API_URL=http://192.168.0.10:8000/api
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Replace `192.168.0.10` with the development machine's local network address when testing on a physical device.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Common development addresses:
 
-## Join the community
+| Environment | API host |
+| --- | --- |
+| Physical device | Development machine LAN IP |
+| Android emulator | `10.0.2.2` |
+| Expo Web | `127.0.0.1` |
 
-Join our community of developers creating universal apps.
+The Laravel server must accept connections from the selected address.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Running the application
+
+```bash
+npx expo start
+```
+
+Useful alternatives:
+
+```bash
+npx expo start --android
+npx expo start --web
+```
+
+## Application configuration
+
+The Expo configuration uses:
+
+```json
+{
+    "expo": {
+        "name": "Talora Apply",
+        "slug": "talora-apply",
+        "scheme": "talora-apply",
+        "android": {
+            "package": "com.taloraapply.mobile"
+        },
+        "experiments": {
+            "typedRoutes": true
+        }
+    }
+}
+```
+
+The Android package identifies the installed application:
+
+```text
+com.taloraapply.mobile
+```
+
+The custom scheme opens application routes:
+
+```text
+talora-apply://
+```
+
+## Main routes
+
+| Route | Description |
+| --- | --- |
+| `/login` | Authenticates the user |
+| `/register` | Creates a new account |
+| `/forgot-password` | Requests password recovery instructions |
+| `/reset-password` | Creates a new password from an email token |
+| `/dashboard` | Displays the initial authenticated experience |
+
+Authentication screens are located in:
+
+```text
+src/app/(auth)/
+```
+
+## API client
+
+The shared API client:
+
+- reads `EXPO_PUBLIC_API_URL`;
+- serializes JSON requests;
+- adds Bearer authentication when a token is provided;
+- normalizes API failures through `ApiError`;
+- prevents duplicated request handling across screens.
+
+API communication should remain outside visual components when the feature becomes large enough to justify a dedicated service.
+
+## Authentication
+
+1. The user submits email and password.
+2. The application calls the Laravel login endpoint.
+3. Laravel returns a Sanctum token.
+4. The token is stored using `expo-secure-store`.
+5. Authenticated requests send the token as a Bearer token.
+6. Logout revokes the API token and removes the local secure value.
+
+Authentication tokens must not be stored in AsyncStorage.
+
+## Internationalization
+
+Translations use `react-i18next` and `expo-localization`.
+
+Supported languages:
+
+- Portuguese
+- English
+
+User-facing messages must use translation keys, including:
+
+- Forms and navigation
+- Validation errors
+- API errors
+- Loading states
+- Success confirmations
+- Accessibility labels
+
+The Backend remains language-neutral and returns standardized messages in English.
+
+## Password recovery
+
+Mobile forgot-password requests identify their trusted client:
+
+```json
+{
+    "email": "user@example.com",
+    "client": "mobile"
+}
+```
+
+Laravel generates:
+
+```text
+talora-apply://reset-password?token=<token>&email=<email>
+```
+
+Expo Router opens:
+
+```text
+src/app/(auth)/reset-password.tsx
+```
+
+Test the scheme on Android:
+
+```bash
+npx uri-scheme open \
+  "talora-apply://reset-password?token=test&email=user%40example.com" \
+  --android
+```
+
+Changing native linking configuration requires a new development build or APK.
+
+## Building Android
+
+Create an EAS development or preview build according to `eas.json`:
+
+```bash
+eas build --platform android --profile preview
+```
+
+To generate an APK, the selected profile must use an APK-compatible Android build type.
+
+## UI principles
+
+- Consistent Talora Apply identity
+- Dark-first interface
+- Keyboard-safe forms
+- Scrollable content on small screens
+- Inline feedback that works on Android, iOS, and Web
+- Accessible touch targets
+- Explicit loading and disabled states
+- Responsive behavior without depending on browser-only APIs
+
+## Planned features
+
+- Resume upload
+- Resume processing status
+- AI-generated resume feedback
+- Job discovery
+- Candidate-to-job compatibility
+- Application history
+- Push notifications
+- User profile and preferences
+- Production Android App Links and iOS Universal Links
+
+## Development workflow
+
+1. Select the related GitHub issue.
+2. Assign it to the current Sprint.
+3. Create a focused branch.
+4. Validate Android, iOS implications, and Expo Web when applicable.
+5. Test loading, offline, error, and success states.
+6. Review Portuguese and English translations.
+7. Open a pull request using the repository template.
+8. Link the issue with `Closes #<issue-number>`.
+
+## License
+
+License information will be defined before the first public release.
