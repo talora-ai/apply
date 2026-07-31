@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
@@ -16,4 +17,9 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', LoginController::class);
     Route::post('/register', RegisterController::class);
     Route::post('/logout', LogoutController::class);
+    Route::post('/forgot-password', ForgotPasswordController::class)
+        ->middleware('throttle:5,1');
+
+    Route::post('/reset-password', ForgotPasswordController::class)
+        ->middleware('throttle:5,1');
 });
