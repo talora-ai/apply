@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { PlatformShell } from '@/features/platform/components/platform-shell'
 import { getAuthenticatedUser } from "@/features/auth/services/get-authenticated-user";
+import { PlatformShell } from "@/features/platform/components/platform-shell";
 
 type PlatformLayoutProps = Readonly<{
     children: React.ReactNode;

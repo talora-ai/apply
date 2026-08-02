@@ -390,7 +390,7 @@ export function RegisterForm() {
                     disabled={
                         pending || !termsAccepted
                     }
-                    className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#6D4AFF] px-5 text-sm font-semibold text-white shadow-[0_12px_35px_rgba(109,74,255,0.25)] transition hover:bg-[#7C5CFF] focus:outline-none focus:ring-4 focus:ring-[#6D4AFF]/20 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex cursor-pointer h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#6D4AFF] px-5 text-sm font-semibold text-white shadow-[0_12px_35px_rgba(109,74,255,0.25)] transition hover:bg-[#7C5CFF] focus:outline-none focus:ring-4 focus:ring-[#6D4AFF]/20 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {pending && <LoadingIcon />}
 

@@ -255,6 +255,7 @@ export function ResetPasswordForm({
                         "hover:from-fuchsia-500 hover:to-violet-500",
                         "focus:outline-none focus:ring-2 focus:ring-fuchsia-500/50",
                         "disabled:cursor-not-allowed disabled:opacity-60",
+                        "cursor-pointer"
                     ].join(" ")}
                 >
                     {pending
