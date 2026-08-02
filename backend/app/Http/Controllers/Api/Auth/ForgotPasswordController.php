@@ -32,8 +32,8 @@ class ForgotPasswordController extends Controller
                 $client = $request->string('client')->toString();
 
                 $resetBaseUrl = match ($client) {
-                    'mobile' => config('services.mobile.url') . '://',
-                    default => config('services.frontend.url') . '/',
+                    'mobile' => str_replace('://', '', config('services.mobile.url')) . '://',
+                    default  => config('services.frontend.url') . '/',
                 };
 
                 $resetUrl = $resetBaseUrl . 'reset-password'
@@ -61,27 +61,10 @@ class ForgotPasswordController extends Controller
             return ResponseApi::error(
                 'Failed to process the password reset request.',
                 [
-                    'class' => self::class,
+                    'message' => 'An unexpected error occurred.',
                 ],
                 500
             );
         }
-    }
-
-    private function createResetUrl(
-        string $token,
-        string $email,
-    ): string {
-        $frontendUrl = rtrim(
-            (string) config('services.frontend.url'),
-            '/'
-        );
-
-        $query = http_build_query([
-            'token' => $token,
-            'email' => $email,
-        ]);
-
-        return "{$frontendUrl}/reset-password?{$query}";
     }
 }
