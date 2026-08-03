@@ -119,10 +119,16 @@ talora-apply://
 | `/reset-password` | Creates a new password from an email token |
 | `/dashboard` | Displays the initial authenticated experience |
 
-Authentication screens are located in:
+Public authentication screens are located in:
 
 ```text
-src/app/(auth)/
+src/app/(public)/
+```
+
+Authenticated screens are located in:
+
+```text
+src/app/(protected)/
 ```
 
 ## API client
@@ -143,6 +149,8 @@ API communication should remain outside visual components when the feature becom
 2. The application calls the Laravel login endpoint.
 3. Laravel returns a Sanctum token.
 4. The token is stored using `expo-secure-store`.
+5. On startup, the token is restored and validated through `/api/user`.
+6. Logout revokes the token in Laravel before removing it from SecureStore.
 5. Authenticated requests send the token as a Bearer token.
 6. Logout revokes the API token and removes the local secure value.
 
@@ -188,7 +196,7 @@ talora-apply://reset-password?token=<token>&email=<email>
 Expo Router opens:
 
 ```text
-src/app/(auth)/reset-password.tsx
+src/app/(public)/reset-password.tsx
 ```
 
 Test the scheme on Android:

@@ -7,7 +7,8 @@
         "success": "Sucesso",
         "error": "Erro",
         "login": "Fazer login",
-        "seeAll": "Ver todas"
+        "seeAll": "Ver todas",
+        "logout": "Sair"
     },
     "login": {
         "welcome": "Bem-vindo de volta",
@@ -52,7 +53,9 @@
         "login": "Entrar",
         "success": "Cadastro realizado com sucesso. Agora faça o login para acessar sua conta.",
         "acceptTerms": "Li e aceito os termos de uso e privacidade.",
-        "alreadyHaveAccount": "Já possuo uma conta"
+        "alreadyHaveAccount": "Já possuo uma conta",
+        "showPassword": "Mostrar",
+        "hidePassword": "Ocultar"
     },
     "dashboard": {
         "greeting": "Olá! 👋",

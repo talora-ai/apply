@@ -1,13 +1,16 @@
-const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+const configuredApiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-if (!apiUrl) {
+if (!configuredApiUrl) {
     throw new Error("EXPO_PUBLIC_API_URL is not configured.");
 }
+
+const apiUrl: string = configuredApiUrl;
 
 type ApiRequestOptions = {
     method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
     body?: unknown;
     token?: string;
+    allowEmptyResponse?: boolean;
 };
 
 export class ApiError extends Error {
@@ -26,7 +29,7 @@ export async function apiRequest<T>(
     endpoint: string,
     options: ApiRequestOptions = {},
 ): Promise<T> {
-    const response = await fetch(`${apiUrl}${endpoint}`, {
+    const response = await fetch(buildApiUrl(endpoint), {
         method: options.method ?? "GET",
         headers: {
             Accept: "application/json",
@@ -51,6 +54,10 @@ export async function apiRequest<T>(
         throw new ApiError(message, response.status, payload);
     }
 
+    if (!payload && options.allowEmptyResponse) {
+        return undefined as T;
+    }
+
     if (!payload) {
         throw new ApiError(
             "The API returned an empty response.",
@@ -59,6 +66,22 @@ export async function apiRequest<T>(
     }
 
     return payload;
+}
+
+function buildApiUrl(endpoint: string): string {
+    const normalizedBaseUrl = apiUrl.replace(/\/$/, "");
+    const normalizedEndpoint = endpoint.startsWith("/")
+        ? endpoint
+        : `/${endpoint}`;
+
+    if (
+        normalizedBaseUrl.endsWith("/api") &&
+        normalizedEndpoint.startsWith("/api/")
+    ) {
+        return `${normalizedBaseUrl}${normalizedEndpoint.slice(4)}`;
+    }
+
+    return `${normalizedBaseUrl}${normalizedEndpoint}`;
 }
 
 function getApiErrorMessage(payload: unknown): string {
