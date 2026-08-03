@@ -11,7 +11,7 @@ final class JobSourceFactory extends Factory
 {
     public function definition(): array
     {
-        $name = fake()->unique()->company().' Jobs';
+        $name = fake()->unique()->company() . ' Jobs';
 
         return ['name' => $name, 'slug' => Str::slug($name), 'base_url' => fake()->url(), 'is_active' => true, 'configuration' => null];
     }

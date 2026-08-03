@@ -26,15 +26,26 @@ final class ResumeAnalysis extends Model
     protected function casts(): array
     {
         return [
-            'overall_score' => 'decimal:2', 'ats_score' => 'decimal:2',
+            'overall_score'      => 'decimal:2', 'ats_score' => 'decimal:2',
             'completeness_score' => 'decimal:2', 'estimated_cost' => 'decimal:6',
-            'strengths' => 'array', 'weaknesses' => 'array', 'skills' => 'array',
-            'suggestions' => 'array', 'raw_response' => 'array',
-            'started_at' => 'datetime', 'completed_at' => 'datetime',
+            'strengths'          => 'array', 'weaknesses' => 'array', 'skills' => 'array',
+            'suggestions'        => 'array', 'raw_response' => 'array',
+            'started_at'         => 'datetime', 'completed_at' => 'datetime',
         ];
     }
 
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
-    public function resume(): BelongsTo { return $this->belongsTo(UserResume::class, 'user_resume_id'); }
-    public function compatibilityAnalyses(): HasMany { return $this->hasMany(JobCompatibilityAnalysis::class); }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function resume(): BelongsTo
+    {
+        return $this->belongsTo(UserResume::class, 'user_resume_id');
+    }
+
+    public function compatibilityAnalyses(): HasMany
+    {
+        return $this->hasMany(JobCompatibilityAnalysis::class);
+    }
 }

@@ -32,7 +32,7 @@ final class DemoDataSeeder extends Seeder
             JobPosting::factory()
                 ->count(5)
                 ->state(fn (): array => [
-                    'company_id' => $company->id,
+                    'company_id'    => $company->id,
                     'job_source_id' => $sources->random()->id,
                 ])
                 ->create();
@@ -41,9 +41,9 @@ final class DemoDataSeeder extends Seeder
         $demoUser = User::query()->firstOrCreate(
             ['email' => 'demo@talora.com.br'],
             [
-                'name' => 'Gustavo',
-                'last_name' => 'Martim',
-                'password' => Hash::make('password'),
+                'name'              => 'Gustavo',
+                'last_name'         => 'Martim',
+                'password'          => Hash::make('password'),
                 'email_verified_at' => now(),
             ],
         );
@@ -52,30 +52,30 @@ final class DemoDataSeeder extends Seeder
 
         $users->each(function (User $user) use ($plans): void {
             $resume = UserResume::factory()->create([
-                'user_id' => $user->id,
-                'name' => 'Currículo principal',
+                'user_id'    => $user->id,
+                'name'       => 'Currículo principal',
                 'is_primary' => true,
             ]);
 
             $resumeAnalysis = ResumeAnalysis::factory()->create([
-                'user_id' => $user->id,
+                'user_id'        => $user->id,
                 'user_resume_id' => $resume->id,
             ]);
 
             $jobs = JobPosting::query()->inRandomOrder()->limit(6)->get();
 
-            $analyses = $jobs->map(fn (JobPosting $job): JobCompatibilityAnalysis =>
-                JobCompatibilityAnalysis::factory()->create([
-                    'user_id' => $user->id,
-                    'user_resume_id' => $resume->id,
-                    'job_posting_id' => $job->id,
+            $analyses = $jobs->map(
+                fn (JobPosting $job): JobCompatibilityAnalysis => JobCompatibilityAnalysis::factory()->create([
+                    'user_id'            => $user->id,
+                    'user_resume_id'     => $resume->id,
+                    'job_posting_id'     => $job->id,
                     'resume_analysis_id' => $resumeAnalysis->id,
                 ]),
             );
 
-            $jobs->take(3)->each(fn (JobPosting $job): JobFavorite =>
-                JobFavorite::factory()->create([
-                    'user_id' => $user->id,
+            $jobs->take(3)->each(
+                fn (JobPosting $job): JobFavorite => JobFavorite::factory()->create([
+                    'user_id'        => $user->id,
                     'job_posting_id' => $job->id,
                 ]),
             );
@@ -83,11 +83,11 @@ final class DemoDataSeeder extends Seeder
             $analyses->sortByDesc('overall_score')->take(2)->each(
                 function (JobCompatibilityAnalysis $analysis) use ($user, $resume): void {
                     $application = JobApplication::factory()->create([
-                        'user_id' => $user->id,
-                        'user_resume_id' => $resume->id,
-                        'job_posting_id' => $analysis->job_posting_id,
+                        'user_id'             => $user->id,
+                        'user_resume_id'      => $resume->id,
+                        'job_posting_id'      => $analysis->job_posting_id,
                         'compatibility_score' => $analysis->overall_score,
-                        'is_automatic' => (float) $analysis->overall_score >= 90,
+                        'is_automatic'        => (float) $analysis->overall_score >= 90,
                     ]);
 
                     $application->events()->createMany([
@@ -102,19 +102,19 @@ final class DemoDataSeeder extends Seeder
                 : $plans->random();
 
             $subscription = UserSubscription::factory()->create([
-                'user_id' => $user->id,
-                'subscription_plan_id' => $plan->id,
-                'provider' => $plan->price > 0 ? 'stripe' : null,
-                'provider_customer_id' => $plan->price > 0 ? fake()->uuid() : null,
+                'user_id'                  => $user->id,
+                'subscription_plan_id'     => $plan->id,
+                'provider'                 => $plan->price > 0 ? 'stripe' : null,
+                'provider_customer_id'     => $plan->price > 0 ? fake()->uuid() : null,
                 'provider_subscription_id' => $plan->price > 0 ? fake()->uuid() : null,
             ]);
 
             if ((float) $plan->price > 0) {
                 PaymentTransaction::factory()->create([
-                    'user_id' => $user->id,
+                    'user_id'              => $user->id,
                     'user_subscription_id' => $subscription->id,
-                    'amount' => $plan->price,
-                    'currency' => $plan->currency,
+                    'amount'               => $plan->price,
+                    'currency'             => $plan->currency,
                 ]);
             }
         });

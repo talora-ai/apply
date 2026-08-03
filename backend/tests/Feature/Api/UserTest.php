@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 use App\Models\User;
 
-describe('GET /api/user', function (): void {
+describe('GET /api/client/user', function (): void {
     it('returns the authenticated user', function (): void {
         $user = User::factory()->create();
         $token = $user->createToken('test-client');
 
         $response = $this
             ->withToken($token->plainTextToken)
-            ->getJson('/api/user');
+            ->getJson('/api/client/user');
 
         $response
             ->assertOk()
@@ -22,7 +22,7 @@ describe('GET /api/user', function (): void {
     });
 
     it('rejects an unauthenticated request', function (): void {
-        $this->getJson('/api/user')
+        $this->getJson('/api/client/user')
             ->assertUnauthorized();
     });
 });

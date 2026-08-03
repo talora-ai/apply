@@ -25,13 +25,24 @@ final class UserSubscription extends Model
     protected function casts(): array
     {
         return [
-            'starts_at' => 'datetime', 'trial_ends_at' => 'datetime',
+            'starts_at'                => 'datetime', 'trial_ends_at' => 'datetime',
             'current_period_starts_at' => 'datetime', 'current_period_ends_at' => 'datetime',
-            'canceled_at' => 'datetime', 'ends_at' => 'datetime', 'metadata' => 'array',
+            'canceled_at'              => 'datetime', 'ends_at' => 'datetime', 'metadata' => 'array',
         ];
     }
 
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
-    public function plan(): BelongsTo { return $this->belongsTo(SubscriptionPlan::class, 'subscription_plan_id'); }
-    public function transactions(): HasMany { return $this->hasMany(PaymentTransaction::class); }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(SubscriptionPlan::class, 'subscription_plan_id');
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(PaymentTransaction::class);
+    }
 }

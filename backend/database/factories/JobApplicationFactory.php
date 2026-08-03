@@ -13,11 +13,11 @@ final class JobApplicationFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_resume_id' => UserResume::factory(),
-            'user_id' => fn (array $attributes): int => UserResume::query()->findOrFail($attributes['user_resume_id'])->user_id,
-            'job_posting_id' => JobPosting::factory(), 'status' => 'submitted',
+            'user_resume_id'      => UserResume::factory(),
+            'user_id'             => fn (array $attributes): int => UserResume::query()->findOrFail($attributes['user_resume_id'])->user_id,
+            'job_posting_id'      => JobPosting::factory(), 'status' => 'submitted',
             'compatibility_score' => fake()->randomFloat(2, 75, 99), 'is_automatic' => fake()->boolean(),
-            'applied_at' => now(), 'last_status_at' => now(), 'failure_reason' => null, 'metadata' => null,
+            'applied_at'          => now(), 'last_status_at' => now(), 'failure_reason' => null, 'metadata' => null,
         ];
     }
 }

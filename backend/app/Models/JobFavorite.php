@@ -16,6 +16,13 @@ final class JobFavorite extends Model
 
     protected $fillable = ['user_id', 'job_posting_id'];
 
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
-    public function jobPosting(): BelongsTo { return $this->belongsTo(JobPosting::class); }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function jobPosting(): BelongsTo
+    {
+        return $this->belongsTo(JobPosting::class);
+    }
 }
