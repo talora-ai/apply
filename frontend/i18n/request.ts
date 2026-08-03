@@ -4,13 +4,14 @@ import { getRequestConfig } from "next-intl/server";
 import {
     defaultLocale,
     isAppLocale,
+    localeCookieName,
 } from "@/i18n/config";
 
 export default getRequestConfig(async () => {
     const cookieStore = await cookies();
 
     const requestedLocale = cookieStore
-        .get("talora_locale")
+        .get(localeCookieName)
         ?.value;
 
     const locale = isAppLocale(requestedLocale)

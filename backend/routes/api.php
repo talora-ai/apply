@@ -17,7 +17,10 @@ Route::get('/user', function (Request $request) {
 Route::prefix('auth')->group(function () {
     Route::post('/login', LoginController::class);
     Route::post('/register', RegisterController::class);
-    Route::post('/logout', LogoutController::class);
+
+    Route::post('/logout', LogoutController::class)
+        ->middleware('auth:sanctum');
+
     Route::post('/forgot-password', ForgotPasswordController::class)
         ->middleware('throttle:5,1');
 

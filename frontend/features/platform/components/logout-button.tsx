@@ -18,7 +18,7 @@ const initialState: LogoutState = {};
 
 export function LogoutButton() {
 
-    const t = useTranslations("Components.Platform.Logout_Button");
+    const t = useTranslations("components.platform.logout-button");
 
     const [state, formAction, pending] =
         useActionState(

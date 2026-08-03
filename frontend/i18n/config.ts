@@ -5,7 +5,8 @@ export const locales = [
 
 export type AppLocale = (typeof locales)[number];
 
-export const defaultLocale: AppLocale = "en";
+export const defaultLocale: AppLocale = "pt-BR";
+export const localeCookieName = "talora-apply-locale";
 
 export function isAppLocale(
     locale: string | undefined,

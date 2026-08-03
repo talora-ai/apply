@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { AuthHero } from "@/features/auth/components/auth-hero";
 import { AuthShell } from "@/features/auth/components/auth-shell";
@@ -11,9 +12,14 @@ type ResetPasswordPageProps = {
     }>;
 };
 
-export const metadata: Metadata = {
-    title: "Reset password",
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations("Metadata.resetPassword");
+
+    return {
+        title: t("title"),
+        description: t("description"),
+    };
+}
 
 export default async function ResetPasswordPage({
     searchParams,
@@ -25,12 +31,11 @@ export default async function ResetPasswordPage({
 
     return (
         <AuthShell hero={<AuthHero />}>
-           <ResetPasswordForm
-            email={email}
-            token={token}
-        />
+            <ResetPasswordForm
+                email={email}
+                token={token}
+            />
         </AuthShell>
-        
     );
 }
 
@@ -43,4 +48,3 @@ function getSearchParam(
 
     return value ?? "";
 }
-

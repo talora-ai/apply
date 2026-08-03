@@ -17,7 +17,7 @@ class RegisterController
     {
         try {
 
-            $user = User::create($request->all());
+            $user = User::create($request->validated());
 
             Mail::to($user->email)->queue(
                 new WelcomeMail($user)

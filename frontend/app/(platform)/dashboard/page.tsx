@@ -14,12 +14,18 @@ import {
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { TaloraAiCard } from "@/features/platform/components/talora-ai-card";
 
-export const metadata: Metadata = {
-    title: "Dashboard",
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations("Metadata.dashboard");
+
+    return {
+        title: t("title"),
+        description: t("description"),
+    };
+}
 
 type Statistic = {
     title: string;
@@ -47,9 +53,9 @@ type Skill = {
     iconClassName: string;
 };
 
-const statistics: Statistic[] = [
+const statisticsData: Statistic[] = [
     {
-        title: "Vagas encontradas",
+        title: "jobsFound",
         value: "245",
         icon: BriefcaseBusiness,
         iconClassName:
@@ -58,7 +64,7 @@ const statistics: Statistic[] = [
         path: "M2 38 C25 38 27 29 45 30 S64 39 82 28 S110 26 126 20 S150 27 169 16 S194 20 218 8",
     },
     {
-        title: "Compatibilidade média",
+        title: "averageCompatibility",
         value: "84%",
         icon: Target,
         iconClassName:
@@ -67,7 +73,7 @@ const statistics: Statistic[] = [
         path: "M2 34 C24 34 31 31 45 24 S65 37 82 28 S105 19 121 24 S145 13 161 18 S190 16 218 7",
     },
     {
-        title: "Candidaturas",
+        title: "applications",
         value: "12",
         icon: FileCheck2,
         iconClassName:
@@ -75,23 +81,14 @@ const statistics: Statistic[] = [
         stroke: "#6D4AFF",
         path: "M2 35 C20 29 34 24 49 31 S76 36 91 27 S117 19 134 27 S158 25 174 17 S197 19 218 8",
     },
-    {
-        title: "Última pesquisa",
-        value: "Hoje",
-        icon: Sparkles,
-        iconClassName:
-            "bg-[#15D0A5]/15 text-[#15D0A5]",
-        stroke: "#15D0A5",
-        path: "M2 33 C18 38 34 27 51 31 S74 24 91 19 S113 31 134 24 S158 17 177 12 S197 18 218 5",
-    },
 ];
 
-const opportunities: Opportunity[] = [
+const opportunitiesData: Opportunity[] = [
     {
         title: "Desenvolvedor Backend Pleno",
         company: "Nubank",
         initials: "nu",
-        workModel: "Remoto",
+        workModel: "remote",
         contract: "CLT",
         compatibility: 96,
         logoClassName:
@@ -101,7 +98,7 @@ const opportunities: Opportunity[] = [
         title: "Software Engineer Backend",
         company: "Mercado Livre",
         initials: "ML",
-        workModel: "Híbrido",
+        workModel: "hybrid",
         contract: "CLT",
         compatibility: 91,
         logoClassName:
@@ -111,7 +108,7 @@ const opportunities: Opportunity[] = [
         title: "Desenvolvedor PHP",
         company: "iFood",
         initials: "iFood",
-        workModel: "Remoto",
+        workModel: "remote",
         contract: "CLT",
         compatibility: 88,
         logoClassName:
@@ -157,7 +154,20 @@ const skills: Skill[] = [
     },
 ];
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+    const t = await getTranslations("Dashboard");
+
+    const statistics = statisticsData.map((statistic) => ({
+        ...statistic,
+        title: t(`statistics.${statistic.title}`),
+        value: statistic.value,
+    }));
+
+    const opportunities = opportunitiesData.map((opportunity) => ({
+        ...opportunity,
+        workModel: t(`opportunities.${opportunity.workModel}`),
+    }));
+
     return (
         <section className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
             
@@ -171,7 +181,7 @@ export default function DashboardPage() {
                 ))}
             </div>
 
-            <OpportunitiesCard />
+            <OpportunitiesCard opportunities={opportunities} />
 
             <SkillsCard />
 
@@ -233,7 +243,15 @@ function StatisticCard({
     );
 }
 
-function OpportunitiesCard() {
+type OpportunitiesCardProps = {
+    opportunities: Opportunity[];
+};
+
+async function OpportunitiesCard({
+    opportunities,
+}: OpportunitiesCardProps) {
+    const t = await getTranslations("Dashboard.opportunities");
+
     return (
         <article
             className="dashboard-card panel flex min-h-130 flex-col overflow-hidden rounded-2xl border border-slate-700/70 sm:col-span-2 xl:col-span-2 xl:col-start-1 xl:row-start-2"
@@ -243,7 +261,7 @@ function OpportunitiesCard() {
         >
             <div className="border-b border-slate-700/60 px-5 py-5 sm:px-6">
                 <h2 className="text-lg font-semibold sm:text-xl">
-                    Melhores oportunidades
+                    {t("title")}
                 </h2>
             </div>
 
@@ -260,7 +278,7 @@ function OpportunitiesCard() {
                 href="/jobs/search"
                 className="mt-auto flex items-center justify-center gap-2 border-t border-slate-700/60 px-5 py-5 text-sm font-medium text-[#15D0A5] transition hover:bg-[#15D0A5]/5"
             >
-                Ver todas as oportunidades
+                {t("viewAll")}
                 <ArrowRight className="size-4" />
             </Link>
         </article>
@@ -271,9 +289,11 @@ type OpportunityItemProps = {
     opportunity: Opportunity;
 };
 
-function OpportunityItem({
+async function OpportunityItem({
     opportunity,
 }: OpportunityItemProps) {
+    const t = await getTranslations("Dashboard.opportunities");
+
     return (
         <Link
             href="#"
@@ -315,7 +335,7 @@ function OpportunityItem({
                 </strong>
 
                 <span className="block text-xs text-slate-500">
-                    Compatibilidade
+                    {t("compatibility")}
                 </span>
             </span>
 
@@ -338,7 +358,9 @@ function OpportunityBadge({
     );
 }
 
-function SkillsCard() {
+async function SkillsCard() {
+    const t = await getTranslations("Dashboard.skills");
+
     return (
         <article
             className="dashboard-card panel flex min-h-130 flex-col rounded-2xl border border-slate-700/70 sm:col-span-2 xl:col-span-2 xl:col-start-3 xl:row-start-2"
@@ -348,7 +370,7 @@ function SkillsCard() {
         >
             <div className="border-b border-slate-700/60 px-5 py-5 sm:px-6">
                 <h2 className="text-lg font-semibold sm:text-xl">
-                    Compatibilidade por habilidade
+                    {t("title")}
                 </h2>
             </div>
 
@@ -365,7 +387,7 @@ function SkillsCard() {
                 href="/skills"
                 className="flex items-center justify-center gap-2 border-t border-slate-700/60 px-5 py-5 text-sm font-medium text-[#15D0A5] transition hover:bg-[#15D0A5]/5"
             >
-                Ver todas as habilidades
+                {t("viewAll")}
                 <ArrowRight className="size-4" />
             </Link>
         </article>

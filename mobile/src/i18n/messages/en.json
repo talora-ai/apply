@@ -7,7 +7,8 @@
         "success": "Success",
         "error": "Error",
         "login": "Sign in",
-        "seeAll": "See all"
+        "seeAll": "See all",
+        "logout": "Sign out"
     },
     "login": {
         "welcome": "Welcome back",
@@ -22,7 +23,9 @@
         "submit": "Sign in",
         "submitting": "Signing in...",
         "noAccount": "Don't have an account?",
-        "createAccount": "Create account"
+        "createAccount": "Create account",
+        "showPassword": "Show",
+        "hidePassword": "Hide"
     },
     "register": {
         "welcome": "Get started",

@@ -1,7 +1,6 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { LogoutButton } from "@/features/platform/components/logout-button";
 import {
     Bell,
     BriefcaseBusiness,
@@ -23,13 +22,15 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
     useEffect,
     useState,
 } from "react";
 
 import type { AuthenticatedUser } from "@/features/auth/types/user";
-import { useTranslations } from "next-intl";
+import { LogoutButton } from "@/features/platform/components/logout-button";
+import { LocaleSwitcher } from "@/i18n/components/locale-switcher";
 
 type PlatformShellProps = Readonly<{
     user: AuthenticatedUser;
@@ -94,7 +95,7 @@ function NavigationLink({
     const Icon = item.icon;
 
 
-    const t_link = useTranslations("Links");
+    const t = useTranslations("Links");
 
     return (
         <Link
@@ -108,7 +109,7 @@ function NavigationLink({
             ].join(" ")}
         >
             <Icon className="size-5" />
-            {t_link(item.title)}
+            {t(item.title)}
         </Link>
     );
 }
@@ -121,19 +122,19 @@ function SearchInput({
     className = "",
 }: SearchInputProps) {
 
-    const t = useTranslations('sidebar')
+    const t = useTranslations("sidebar");
 
     return (
         <label className={`relative ${className}`}>
             <span className="sr-only">
-                {t('search')}
+                {t("search")}
             </span>
 
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-500" />
 
             <input
                 type="search"
-                placeholder={t('search_job')}
+                placeholder={t("search_job")}
                 className="w-full rounded-xl border border-slate-700 bg-[#161C2D] py-2.5 pl-10 pr-4 text-sm outline-none transition placeholder:text-slate-500 focus:border-[#6D4AFF] md:w-72 xl:w-96"
             />
         </label>
@@ -141,6 +142,7 @@ function SearchInput({
 }
 
 function NotificationsDropdown() {
+    const t = useTranslations("sidebar");
 
     return (
         <div
@@ -149,14 +151,14 @@ function NotificationsDropdown() {
         >
             <div className="flex items-center justify-between border-b border-slate-700 px-4 py-3">
                 <strong className="text-sm">
-                    Notificações
+                    {t("notifications")}
                 </strong>
 
                 <button
                     type="button"
                     className="text-xs text-[#15D0A5] hover:underline"
                 >
-                    Marcar como lidas
+                    {t("markAsRead")}
                 </button>
             </div>
 
@@ -171,12 +173,11 @@ function NotificationsDropdown() {
 
                     <span>
                         <strong className="block text-sm">
-                            Candidatura realizada
+                            Vaga inscrita
                         </strong>
 
                         <span className="mt-1 block text-xs text-slate-400">
-                            Nubank • 96% de
-                            compatibilidade
+                            Alguma coisa
                         </span>
                     </span>
                 </Link>
@@ -191,12 +192,11 @@ function NotificationsDropdown() {
 
                     <span>
                         <strong className="block text-sm">
-                            Currículo analisado
+                            CV Analisado
                         </strong>
 
                         <span className="mt-1 block text-xs text-slate-400">
-                            Seu perfil profissional foi
-                            atualizado.
+                            alguma coisa
                         </span>
                     </span>
                 </Link>
@@ -212,6 +212,8 @@ type ProfileDropdownProps = {
 function ProfileDropdown({
     user,
 }: ProfileDropdownProps) {
+    const t = useTranslations("sidebar");
+
     return (
         <div
             className="absolute right-0 top-14 z-30 w-64 overflow-hidden rounded-2xl border border-slate-700 bg-[#161C2D] shadow-2xl"
@@ -219,7 +221,7 @@ function ProfileDropdown({
         >
             <div className="border-b border-slate-700 px-4 py-4">
                 <strong className="block text-sm">
-                    {user.name ?? "Usuário Talora"}
+                    {user.name ?? t("fallbackUser")}
                 </strong>
 
                 <span className="mt-1 block truncate text-xs text-slate-400">
@@ -231,26 +233,24 @@ function ProfileDropdown({
                 <DropdownLink
                     href="/profile"
                     icon={UserRound}
-                    title="Meu perfil"
+                    title={t("myProfile")}
                 />
 
                 <DropdownLink
                     href="/billing"
                     icon={CreditCard}
-                    title="Plano e cobrança"
+                    title={t("billing")}
                 />
 
                 <DropdownLink
                     href="/settings"
                     icon={Settings}
-                    title="Configurações"
+                    title={t("settings")}
                 />
             </div>
 
             <div className="border-t border-slate-700 p-2">
-                
                 <LogoutButton />
-
             </div>
         </div>
     );
@@ -292,6 +292,7 @@ export function PlatformShell({
     children,
 }: PlatformShellProps) {
     const pathname = usePathname();
+    const t = useTranslations("sidebar");
 
     const [sidebarOpen, setSidebarOpen] =
         useState(false);
@@ -340,7 +341,7 @@ export function PlatformShell({
     }, []);
 
     const firstName =
-        user.name?.split(" ")[0] ?? "Gustavo";
+        user.name?.split(" ")[0] ?? t("fallbackUser");
 
     const initials = getInitials(
         user.name ?? user.email,
@@ -351,15 +352,13 @@ export function PlatformShell({
         setProfileOpen(false);
     }
 
-    const t = useTranslations('sidebar');
-
     return (
         <div className="platform-background min-h-svh text-slate-100">
             {sidebarOpen && (
                 <button
                     type="button"
                     className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden"
-                    aria-label="Fechar menu"
+                    aria-label={t("closeMenu")}
                     onClick={() => setSidebarOpen(false)}
                 />
             )}
@@ -376,7 +375,7 @@ export function PlatformShell({
                         : "-translate-x-full",
                     "lg:translate-x-0",
                 ].join(" ")}
-                aria-label="Navegação principal"
+                aria-label={t("mainNavigation")}
             >
                 <div className="flex items-center justify-between px-2">
                     <Link
@@ -405,7 +404,7 @@ export function PlatformShell({
                     <button
                         type="button"
                         className="rounded-xl p-2 text-slate-400 transition hover:bg-white/5 hover:text-white lg:hidden"
-                        aria-label="Fechar menu"
+                        aria-label={t("closeMenu")}
                         onClick={() => setSidebarOpen(false)}
                     >
                         <X className="size-5" />
@@ -431,18 +430,18 @@ export function PlatformShell({
                     
                     <h2 className="font-semibold flex gap-2">
                         <Sparkles className="size-6 text-[#15D0A5]" />
-                        {t('upgrade.title')}
+                        {t("upgrade.title")}
                     </h2>
 
                     <p className="mt-2 text-sm leading-6 text-slate-400">
-                       {t('upgrade.text')}
+                        {t("upgrade.text")}
                     </p>
 
                     <button
                         type="button"
                         className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#15D0A5] px-4 py-3 text-sm font-semibold text-[#0B1020] transition hover:bg-emerald-300"
                     >
-                        {t('upgrade.upgrade_now')}
+                        {t("upgrade.upgrade_now")}
                         <span aria-hidden="true">↗</span>
                     </button>
                 </div>
@@ -458,7 +457,7 @@ export function PlatformShell({
                             <button
                                 type="button"
                                 className="mt-1 rounded-xl border border-slate-700 bg-[#161C2D] p-2.5 text-slate-200 lg:hidden"
-                                aria-label="Abrir menu"
+                                aria-label={t("openMenu")}
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     setSidebarOpen(true);
@@ -469,11 +468,11 @@ export function PlatformShell({
 
                             <div>
                                 <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                                    {t('welcome')}, {firstName}!
+                                    {t("welcome")}, {firstName}!
                                 </h1>
 
                                 <p className="mt-1 text-sm text-slate-400 sm:text-base">
-                                    {t('subtitle')}
+                                    {t("subtitle")}
                                 </p>
                             </div>
                         </div>
@@ -481,11 +480,13 @@ export function PlatformShell({
                         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
                             <SearchInput className="hidden md:block" />
 
+                            <LocaleSwitcher compact />
+
                             <div className="relative">
                                 <button
                                     type="button"
-                                    className="relative rounded-xl border border-slate-700 bg-[#161C2D] p-2.5 text-slate-300 transition hover:border-[#6D4AFF] hover:text-white"
-                                    aria-label="Notificações"
+                                    className="relative cursor-pointer rounded-xl border border-slate-700 bg-[#161C2D] p-2.5 text-slate-300 transition hover:border-[#6D4AFF] hover:text-white"
+                                    aria-label={t("notifications")}
                                     aria-expanded={
                                         notificationsOpen
                                     }
@@ -513,8 +514,8 @@ export function PlatformShell({
                             <div className="relative">
                                 <button
                                     type="button"
-                                    className="flex items-center gap-2 rounded-full border-2 border-slate-700 bg-[#161C2D] p-1 pr-2 transition hover:border-[#6D4AFF]"
-                                    aria-label="Abrir perfil"
+                                    className="flex cursor-pointer items-center gap-2 rounded-full border-2 border-slate-700 bg-[#161C2D] p-1 pr-2 transition hover:border-[#6D4AFF]"
+                                    aria-label={t("openProfile")}
                                     aria-expanded={profileOpen}
                                     onClick={(event) => {
                                         event.stopPropagation();

@@ -16,10 +16,9 @@
         "Hero": {
             "title": "Seu agente inteligente de carreira",
             "subtitle": "Sua próxima oportunidade começa com uma decisão.",
-            "text": "Analyze your resume, find compatible job openings, and track your professional development, all in one place."
+            "text": "Analise seu currículo, encontre vagas compatíveis e acompanhe seu desenvolvimento profissional, tudo em um só lugar."
         }
     },
-
     "Register": {
         "welcome": "Comece agora",
         "title": "Crie sua conta",
@@ -44,10 +43,32 @@
         "hasAccount": "Já possui uma conta?",
         "login": "Entrar"
     },
-
     "Dashboard": {
+        "statistics": {
+            "jobsFound": "Vagas encontradas",
+            "averageCompatibility": "Compatibilidade média",
+            "applications": "Candidaturas enviadas"
+        },
+        "opportunities":{
+            "title": "Oportunidades",    
+            "remote": "Remoto",
+            "onsite": "Presencial",
+            "hybrid": "Híbrido",
+            "compatibility": "Compatibilidade",
+            "viewAll": "Ver todas"
+        },
+        "skills": {
+            "title": "Habilidades",
+            "viewAll": "Ver todas"
+        },
+        "ai": {
+            "resumeAnalyzed": "Currículo analisado",
+            "profileIdentified": "Perfil identificado",
+            "topSkills": "Principais habilidades",
+            "viewFullAnalysis": "Ver análise completa",
+            "updatedToday": "Atualizado hoje"
+        }
     },
-
     "forgotPassword": {
         "title": "Recuperar senha",
         "description": "Informe seu e-mail para receber as instruções de recuperação.",
@@ -63,12 +84,11 @@
         "unexpectedError": "Não foi possível enviar as instruções de recuperação.",
         "redirecting": "Você será redirecionado para o login."
     },
-
     "components": {
         "platform": {
             "logout-button": {
                 "out": "Sair",
-                "outing": "Saindo"
+                "outing": "Saindo..."
             }
         }
     },
@@ -91,7 +111,6 @@
         "unexpectedError": "Não foi possível redefinir sua senha.",
         "backToLogin": "Voltar para o login"
     },
-
     "Validation": {
         "invalidEmail": "Informe um e-mail válido.",
         "passwordRequired": "Informe sua senha.",
@@ -134,9 +153,8 @@
         "REGISTER_INVALID_FIELDS": "Verifique os dados informados.",
         "REGISTER_FAILED": "Não foi possível criar sua conta. Tente novamente."
     },
-
     "Links": {
-        "dashboard": "Visão Geral",
+        "dashboard": "Visão geral",
         "search_jobs": "Procurar vagas",
         "applications": "Candidaturas",
         "resumes": "Currículos",
@@ -144,16 +162,75 @@
         "analytics": "Análises",
         "settings": "Configurações"
     },
-
     "sidebar": {
         "upgrade": {
-            "title": "Upgrade para Premium",
+            "title": "Faça upgrade para o Premium",
             "text": "Tenha acesso a recursos exclusivos e acelere sua carreira.",
-            "upgrade_now": "Upgrade agora"
+            "upgrade_now": "Fazer upgrade agora"
         },
         "welcome": "Olá",
-        "subtitle": "Acompanhe seu currículo e os resultados das sua pesquisas.",
+        "subtitle": "Acompanhe seu currículo e os resultados das suas pesquisas.",
         "search": "Buscar",
-        "search_job": "Buscar vaga"
+        "search_job": "Buscar vaga",
+        "myProfile": "Meu perfil",
+        "billing": "Faturamento",
+        "settings": "Configurações",
+        "notifications": "Notificações",
+        "markAsRead": "Marcar todas como lidas",
+        "mainNavigation": "Navegação principal",
+        "closeMenu": "Fechar menu",
+        "openMenu": "Abrir menu",
+        "openProfile": "Abrir perfil"
+    },
+    "LocaleSwitcher": {
+        "portuguese": "PT-BR",
+        "english": "EN-US",
+        "label": "Idioma"
+    },
+    "Metadata": {
+        "login": {
+            "title": "Login - Talora Apply",
+            "description": "Entre na sua conta para acessar o Talora Apply."
+        },
+        "register": {
+            "title": "Cadastro - Talora Apply",
+            "description": "Crie sua conta para acessar o Talora Apply."
+        },
+        "forgotPassword": {
+            "title": "Recuperar senha - Talora Apply",
+            "description": "Recupere sua senha para acessar o Talora Apply."
+        },
+        "resetPassword": {
+            "title": "Redefinir senha - Talora Apply",
+            "description": "Redefina sua senha para acessar o Talora Apply."
+        },
+        "dashboard": {
+            "title": "Dashboard - Talora Apply",
+            "description": "Acompanhe seu currículo e os resultados das suas pesquisas."
+        },
+        "search_jobs": {
+            "title": "Procurar vagas - Talora Apply",
+            "description": "Encontre oportunidades compatíveis com seu perfil."
+        },
+        "applications": {
+            "title": "Candidaturas - Talora Apply",
+            "description": "Acompanhe suas candidaturas e o status de cada uma."
+        },
+        "resumes": {    
+            "title": "Currículos - Talora Apply",
+            "description": "Gerencie seus currículos e mantenha-os atualizados."
+        },
+        "favorites": {
+            "title": "Favoritas - Talora Apply",
+            "description": "Acompanhe as vagas que você marcou como favoritas."
+        },
+        "analytics": {
+            "title": "Análises - Talora Apply",
+            "description": "Acompanhe seu desempenho e evolução na busca por oportunidades."
+        },
+        "settings": {
+            "title": "Configurações - Talora Apply",
+            "description": "Gerencie suas preferências e configurações da conta."
+        }
     }
 }

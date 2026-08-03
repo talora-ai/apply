@@ -4,10 +4,12 @@ import {
     ArrowRight,
     Sparkles,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { PointerEvent } from "react";
 import { useRef } from "react";
 
 export function TaloraAiCard() {
+    const t = useTranslations("Dashboard.ai");
     const cardRef = useRef<HTMLElement>(null);
 
     function handlePointerMove(
@@ -143,21 +145,21 @@ export function TaloraAiCard() {
 
             <div className="relative mt-7 px-5 text-center">
                 <h3 className="text-lg font-semibold">
-                    Analisei seu currículo
+                    {t("resumeAnalyzed")}
                 </h3>
 
                 <div className="my-5 h-px bg-slate-700/70" />
 
                 <p className="text-sm text-slate-400">
-                    Perfil identificado
+                    {t("profileIdentified")}
                 </p>
 
                 <p className="mt-2 font-semibold text-[#15D0A5]">
-                    Backend Developer Pleno
+                    Desenvolvedor PHP
                 </p>
 
                 <p className="mt-6 text-sm text-slate-400">
-                    Principais competências
+                    {t("topSkills")}
                 </p>
 
                 <div className="mt-3 flex flex-wrap justify-center gap-2">
@@ -188,13 +190,13 @@ export function TaloraAiCard() {
                     type="button"
                     className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#15D0A5] px-4 py-3 text-sm font-semibold text-[#0B1020] transition hover:bg-emerald-300"
                 >
-                    Ver análise completa
+                    {t("viewFullAnalysis")}
                     <ArrowRight className="size-4" />
                 </button>
 
                 <p className="mt-4 flex items-center justify-center gap-2 text-center text-xs text-slate-400">
                     <span className="status-dot size-2 rounded-full bg-[#15D0A5]" />
-                    Análise atualizada hoje
+                    {t("updatedToday")}
                 </p>
             </div>
         </article>
