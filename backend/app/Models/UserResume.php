@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Database\Factories\UserResumeFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+final class UserResume extends Model
+{
+    /** @use HasFactory<UserResumeFactory> */
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'user_id', 'name', 'original_filename', 'disk', 'path', 'mime_type',
+        'size', 'status', 'is_primary', 'extracted_text', 'metadata', 'processed_at',
+    ];
+
+    protected function casts(): array
+    {
+        return ['is_primary' => 'boolean', 'metadata' => 'array', 'processed_at' => 'datetime'];
+    }
+
+    public function user(): BelongsTo { return $this->belongsTo(User::class); }
+    public function analyses(): HasMany { return $this->hasMany(ResumeAnalysis::class); }
+    public function compatibilityAnalyses(): HasMany { return $this->hasMany(JobCompatibilityAnalysis::class); }
+    public function applications(): HasMany { return $this->hasMany(JobApplication::class); }
+}
