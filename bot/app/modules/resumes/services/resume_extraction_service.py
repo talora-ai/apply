@@ -4,6 +4,7 @@ from fastapi import UploadFile
 
 from app.core.config import get_settings
 from app.core.exceptions import BotError
+from app.modules.resumes.diagnostics.ats_analyzer import AtsAnalyzer
 from app.modules.resumes.extractors.base import ExtractedDocument
 from app.modules.resumes.extractors.docx import DocxResumeExtractor
 from app.modules.resumes.extractors.pdf import PdfResumeExtractor
@@ -29,6 +30,7 @@ class ResumeExtractionService:
 
         suffix = Path(file.filename or "").suffix.casefold()
         extracted = self._extract_document(content, suffix)
+        ats_diagnostic = AtsAnalyzer().analyze(content, suffix)
 
         return ResumeExtractionResponse(
             document=DocumentData(
@@ -37,6 +39,7 @@ class ResumeExtractionService:
                 page_count=extracted.page_count,
                 character_count=len(extracted.full_text),
                 metadata=extracted.metadata,
+                ats=ats_diagnostic,
             ),
             content=ResumeContent(
                 full_text=extracted.full_text,

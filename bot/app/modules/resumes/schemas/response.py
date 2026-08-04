@@ -1,6 +1,17 @@
 from pydantic import BaseModel, ConfigDict, Field
 
 
+class AtsDiagnosticData(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    ats_friendly: bool
+    confidence: float = Field(ge=0, le=1)
+    layout_type: str
+    extraction_quality: str
+    reason_codes: list[str]
+    metrics: dict[str, str | int | float | bool | None]
+
+
 class DocumentData(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -9,6 +20,7 @@ class DocumentData(BaseModel):
     page_count: int | None = None
     character_count: int = Field(ge=1)
     metadata: dict[str, str | int | bool | None]
+    ats: AtsDiagnosticData
 
 
 class ExperienceData(BaseModel):
@@ -59,6 +71,6 @@ class ResumeContent(BaseModel):
 class ResumeExtractionResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    schema_version: str = "1.2"
+    schema_version: str = "1.3"
     document: DocumentData
     content: ResumeContent

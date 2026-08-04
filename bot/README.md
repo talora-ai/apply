@@ -75,7 +75,7 @@ Content-Type: multipart/form-data
 Campo multipart: `file`.
 
 O Bot aceita PDF e DOCX, limita o arquivo a 10 MB, não persiste o documento e
-não registra seu conteúdo em logs. A resposta usa o schema `1.2` e entrega:
+não registra seu conteúdo em logs. A resposta usa o schema `1.3` e entrega:
 
 - competências únicas detectadas no documento inteiro;
 - experiências agrupadas por cargo, empresa, período e descrição;
@@ -83,6 +83,12 @@ não registra seu conteúdo em logs. A resposta usa o schema `1.2` e entrega:
 - formação e certificações separadas;
 - projetos agrupados em objetos, com os itens `•` dentro de `description`;
 - texto integral para auditoria e futura análise por IA.
+- diagnóstico ATS separado, com `ats_friendly`, tipo de layout, qualidade da
+  extração, códigos de motivo e métricas do documento.
+
+O Bot não tenta descobrir se o arquivo foi produzido no Canva. Essa origem não é
+confiável em todos os PDFs. Em vez disso, diagnostica características objetivas,
+como múltiplas colunas, texto convertido em imagem e ordem de leitura ambígua.
 
 ## Qualidade
 

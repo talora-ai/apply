@@ -67,9 +67,11 @@ def test_extracts_a_pdf_resume(
 
     assert response.status_code == 200
     payload = response.json()
-    assert payload["schema_version"] == "1.2"
+    assert payload["schema_version"] == "1.3"
     assert payload["document"]["mime_type"] == "application/pdf"
     assert payload["document"]["page_count"] == 1
+    assert payload["document"]["ats"]["ats_friendly"] is True
+    assert payload["document"]["ats"]["layout_type"] == "single_column"
     assert "Gustavo Martim" in payload["content"]["full_text"]
     assert payload["content"]["sections"]["skills"] == ["PHP", "Laravel"]
 
@@ -92,9 +94,11 @@ def test_extracts_a_docx_resume(
 
     assert response.status_code == 200
     payload = response.json()
-    assert payload["schema_version"] == "1.2"
+    assert payload["schema_version"] == "1.3"
     assert "Backend Developer — Talora" in payload["content"]["full_text"]
     sections = payload["content"]["sections"]
+    assert payload["document"]["ats"]["ats_friendly"] is True
+    assert payload["document"]["ats"]["layout_type"] == "document_flow"
     assert sections["experiences"] == [
         {
             "position": "Backend Developer",
