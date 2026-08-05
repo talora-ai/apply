@@ -1,6 +1,6 @@
 [project]
 name = "talora-apply-bot"
-version = "0.1.0"
+version = "0.2.0"
 description = "Internal document-processing service for Talora Apply."
 readme = "README.md"
 requires-python = ">=3.12"

@@ -28,6 +28,8 @@ Defina o mesmo valor em `bot/.env` e `backend/.env`:
 
 ```env
 BOT_SERVICE_TOKEN=token-gerado
+BOT_SIGNING_SECRET=outro-segredo-aleatorio-independente
+SIGNATURE_MAX_AGE_SECONDS=60
 ```
 
 No Backend local:
@@ -41,6 +43,9 @@ Em Docker Compose:
 ```env
 BOT_URL=http://bot:9000
 ```
+
+O Bot usa `127.0.0.1` por padrão. Em containers, defina `APP_HOST=0.0.0.0`
+somente dentro de uma rede privada e não publique a porta `9000` na internet.
 
 ## Desenvolvimento
 
@@ -69,13 +74,19 @@ GET /health
 ```http
 POST /api/v1/resumes/extract
 Authorization: Bearer {BOT_SERVICE_TOKEN}
+X-Talora-Processing-Id: {UUID}
+X-Talora-Timestamp: {UNIX_TIMESTAMP}
+X-Talora-Nonce: {UUID}
+X-Talora-Content-SHA256: {SHA256}
+X-Talora-Signature: {HMAC_SHA256}
 Content-Type: multipart/form-data
 ```
 
 Campo multipart: `file`.
 
 O Bot aceita PDF e DOCX, limita o arquivo a 10 MB, não persiste o documento e
-não registra seu conteúdo em logs. A resposta usa o schema `1.3` e entrega:
+não registra seu conteúdo em logs. A resposta usa o schema `1.4`, confirma o
+`processing_id` e o SHA-256 do documento, e entrega:
 
 - competências únicas detectadas no documento inteiro;
 - experiências agrupadas por cargo, empresa, período e descrição;
@@ -89,6 +100,15 @@ não registra seu conteúdo em logs. A resposta usa o schema `1.3` e entrega:
 O Bot não tenta descobrir se o arquivo foi produzido no Canva. Essa origem não é
 confiável em todos os PDFs. Em vez disso, diagnostica características objetivas,
 como múltiplas colunas, texto convertido em imagem e ordem de leitura ambígua.
+
+O arquivo permanece criptografado no storage e é descriptografado somente pelo
+Backend em um stream de memória. O Bot nunca recebe a chave. Antes de analisar,
+ele valida a autenticação de serviço, a assinatura, a integridade do conteúdo,
+a validade temporal e o nonce contra replay.
+
+O armazenamento de nonce atual protege uma única instância. Antes de escalar o
+Bot horizontalmente, ele deve ser substituído por Redis com TTL compartilhado
+entre as réplicas.
 
 ## Qualidade
 

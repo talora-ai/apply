@@ -1,4 +1,7 @@
+import time
+from collections.abc import Callable
 from io import BytesIO
+from uuid import uuid4
 
 import pymupdf
 from docx import Document
@@ -57,17 +60,22 @@ def test_rejects_an_invalid_service_token(client: TestClient) -> None:
 
 def test_extracts_a_pdf_resume(
     client: TestClient,
-    auth_headers: dict[str, str],
+    auth_headers: Callable[..., dict[str, str]],
 ) -> None:
+    content = create_pdf()
+    headers = auth_headers(content)
     response = client.post(
         "/api/v1/resumes/extract",
-        headers=auth_headers,
-        files={"file": ("resume.pdf", create_pdf(), "application/pdf")},
+        headers=headers,
+        files={"file": ("resume.pdf", content, "application/pdf")},
     )
 
     assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-store"
     payload = response.json()
-    assert payload["schema_version"] == "1.3"
+    assert payload["schema_version"] == "1.4"
+    assert payload["processing_id"] == headers["X-Talora-Processing-Id"]
+    assert payload["document"]["sha256"] == headers["X-Talora-Content-SHA256"]
     assert payload["document"]["mime_type"] == "application/pdf"
     assert payload["document"]["page_count"] == 1
     assert payload["document"]["ats"]["ats_friendly"] is True
@@ -78,15 +86,16 @@ def test_extracts_a_pdf_resume(
 
 def test_extracts_a_docx_resume(
     client: TestClient,
-    auth_headers: dict[str, str],
+    auth_headers: Callable[..., dict[str, str]],
 ) -> None:
+    content = create_docx()
     response = client.post(
         "/api/v1/resumes/extract",
-        headers=auth_headers,
+        headers=auth_headers(content),
         files={
             "file": (
                 "resume.docx",
-                create_docx(),
+                content,
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             )
         },
@@ -94,7 +103,7 @@ def test_extracts_a_docx_resume(
 
     assert response.status_code == 200
     payload = response.json()
-    assert payload["schema_version"] == "1.3"
+    assert payload["schema_version"] == "1.4"
     assert "Backend Developer — Talora" in payload["content"]["full_text"]
     sections = payload["content"]["sections"]
     assert payload["document"]["ats"]["ats_friendly"] is True
@@ -129,11 +138,11 @@ def test_extracts_a_docx_resume(
 
 def test_rejects_an_empty_file(
     client: TestClient,
-    auth_headers: dict[str, str],
+    auth_headers: Callable[..., dict[str, str]],
 ) -> None:
     response = client.post(
         "/api/v1/resumes/extract",
-        headers=auth_headers,
+        headers=auth_headers(b""),
         files={"file": ("resume.pdf", b"", "application/pdf")},
     )
 
@@ -143,12 +152,13 @@ def test_rejects_an_empty_file(
 
 def test_rejects_an_unsupported_file(
     client: TestClient,
-    auth_headers: dict[str, str],
+    auth_headers: Callable[..., dict[str, str]],
 ) -> None:
+    content = b"plain text"
     response = client.post(
         "/api/v1/resumes/extract",
-        headers=auth_headers,
-        files={"file": ("resume.txt", b"plain text", "text/plain")},
+        headers=auth_headers(content),
+        files={"file": ("resume.txt", content, "text/plain")},
     )
 
     assert response.status_code == 422
@@ -157,12 +167,13 @@ def test_rejects_an_unsupported_file(
 
 def test_rejects_a_file_over_10_mb(
     client: TestClient,
-    auth_headers: dict[str, str],
+    auth_headers: Callable[..., dict[str, str]],
 ) -> None:
+    content = b"%PDF-" + b"0" * (10 * 1024 * 1024)
     response = client.post(
         "/api/v1/resumes/extract",
-        headers=auth_headers,
-        files={"file": ("resume.pdf", b"%PDF-" + b"0" * (10 * 1024 * 1024), "application/pdf")},
+        headers=auth_headers(content),
+        files={"file": ("resume.pdf", content, "application/pdf")},
     )
 
     assert response.status_code == 413
@@ -171,13 +182,70 @@ def test_rejects_a_file_over_10_mb(
 
 def test_rejects_a_mismatched_extension(
     client: TestClient,
-    auth_headers: dict[str, str],
+    auth_headers: Callable[..., dict[str, str]],
 ) -> None:
+    content = create_pdf()
     response = client.post(
         "/api/v1/resumes/extract",
-        headers=auth_headers,
-        files={"file": ("resume.docx", create_pdf(), "application/pdf")},
+        headers=auth_headers(content),
+        files={"file": ("resume.docx", content, "application/pdf")},
     )
 
     assert response.status_code == 422
     assert response.json()["error"]["code"] == "UNSUPPORTED_FILE_TYPE"
+
+
+def test_rejects_a_tampered_document(
+    client: TestClient,
+    auth_headers: Callable[..., dict[str, str]],
+) -> None:
+    original = create_pdf("original")
+    tampered = create_pdf("tampered")
+
+    response = client.post(
+        "/api/v1/resumes/extract",
+        headers=auth_headers(original),
+        files={"file": ("resume.pdf", tampered, "application/pdf")},
+    )
+
+    assert response.status_code == 401
+    assert response.json()["error"]["code"] == "CONTENT_INTEGRITY_FAILED"
+
+
+def test_rejects_an_expired_signature(
+    client: TestClient,
+    auth_headers: Callable[..., dict[str, str]],
+) -> None:
+    content = create_pdf()
+
+    response = client.post(
+        "/api/v1/resumes/extract",
+        headers=auth_headers(content, timestamp=int(time.time()) - 120),
+        files={"file": ("resume.pdf", content, "application/pdf")},
+    )
+
+    assert response.status_code == 401
+    assert response.json()["error"]["code"] == "EXPIRED_SIGNATURE"
+
+
+def test_rejects_a_replayed_request(
+    client: TestClient,
+    auth_headers: Callable[..., dict[str, str]],
+) -> None:
+    content = create_pdf()
+    headers = auth_headers(content, processing_id=str(uuid4()), nonce=str(uuid4()))
+
+    first = client.post(
+        "/api/v1/resumes/extract",
+        headers=headers,
+        files={"file": ("resume.pdf", content, "application/pdf")},
+    )
+    replay = client.post(
+        "/api/v1/resumes/extract",
+        headers=headers,
+        files={"file": ("resume.pdf", content, "application/pdf")},
+    )
+
+    assert first.status_code == 200
+    assert replay.status_code == 409
+    assert replay.json()["error"]["code"] == "REPLAY_DETECTED"

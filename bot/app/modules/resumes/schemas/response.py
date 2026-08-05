@@ -19,6 +19,7 @@ class DocumentData(BaseModel):
     mime_type: str
     page_count: int | None = None
     character_count: int = Field(ge=1)
+    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     metadata: dict[str, str | int | bool | None]
     ats: AtsDiagnosticData
 
@@ -71,6 +72,7 @@ class ResumeContent(BaseModel):
 class ResumeExtractionResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    schema_version: str = "1.3"
+    schema_version: str = "1.4"
+    processing_id: str
     document: DocumentData
     content: ResumeContent

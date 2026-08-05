@@ -14,9 +14,11 @@ class Settings(BaseSettings):
 
     app_name: str = "Talora Apply Bot"
     app_env: str = "local"
-    app_host: str = "0.0.0.0"
+    app_host: str = "127.0.0.1"
     app_port: int = 9000
     bot_service_token: str = Field(min_length=16)
+    bot_signing_secret: str = Field(min_length=32)
+    signature_max_age_seconds: int = Field(default=60, ge=10, le=300)
     max_file_size_mb: int = Field(default=10, ge=1, le=25)
     max_pdf_pages: int = Field(default=50, ge=1, le=200)
     max_docx_uncompressed_mb: int = Field(default=50, ge=1, le=200)
