@@ -11,6 +11,8 @@ final class UserResumeResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $metadata = is_array($this->metadata) ? $this->metadata : [];
+
         return [
             'id'                => $this->id,
             'name'              => $this->name,
@@ -19,6 +21,7 @@ final class UserResumeResource extends JsonResource
             'size'              => $this->size,
             'status'            => $this->status->value,
             'is_primary'        => $this->is_primary,
+            'ats_friendly'      => $metadata['ats']['ats_friendly'] ?? null,
             'processed_at'      => $this->processed_at,
             'created_at'        => $this->created_at,
             'updated_at'        => $this->updated_at,

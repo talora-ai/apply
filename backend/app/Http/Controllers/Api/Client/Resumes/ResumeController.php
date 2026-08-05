@@ -8,6 +8,7 @@ use App\Actions\Resumes\StoreUserResumeAction;
 use App\Helpers\ResponseApi;
 use App\Http\ApiRequests\Client\Resumes\StoreResumeRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResumeDetailResource;
 use App\Http\Resources\UserResumeResource;
 use App\Models\UserResume;
 use Exception;
@@ -70,7 +71,7 @@ final class ResumeController extends Controller
         return ResponseApi::success(
             'Resume retrieved successfully.',
             [
-                'resume' => (new UserResumeResource($resume))->resolve($request),
+                'resume' => (new UserResumeDetailResource($resume))->resolve($request),
             ],
         );
     }

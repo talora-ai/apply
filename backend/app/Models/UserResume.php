@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Casts\EncryptedResumeData;
 use App\Enums\UserResumeStatus;
 use Database\Factories\UserResumeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,10 +27,13 @@ final class UserResume extends Model
     protected function casts(): array
     {
         return [
-            'is_primary'   => 'boolean',
-            'metadata'     => 'array',
-            'processed_at' => 'datetime',
-            'status'       => UserResumeStatus::class,
+            'name'              => EncryptedResumeData::class . ':string',
+            'original_filename' => EncryptedResumeData::class . ':string',
+            'is_primary'        => 'boolean',
+            'extracted_text'    => EncryptedResumeData::class . ':string',
+            'metadata'          => EncryptedResumeData::class . ':array',
+            'processed_at'      => 'datetime',
+            'status'            => UserResumeStatus::class,
         ];
     }
 

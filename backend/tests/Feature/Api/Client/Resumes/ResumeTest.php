@@ -3,17 +3,22 @@
 declare(strict_types=1);
 
 use App\Enums\UserResumeStatus;
+use App\Exceptions\Resumes\ResumeEncryptionException;
 use App\Jobs\ProcessUserResumeJob;
 use App\Models\User;
 use App\Models\UserResume;
+use App\Services\Resumes\EncryptedResumeStorage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 describe('client resumes', function (): void {
     beforeEach(function (): void {
         Storage::fake('resumes');
         Queue::fake();
+        config()->set('resumes.encryption.key', base64_encode(str_repeat('k', 32)));
     });
 
     it('defines every resume processing status', function (): void {
@@ -60,6 +65,7 @@ describe('client resumes', function (): void {
             512,
             'application/pdf',
         );
+        $originalContent = file_get_contents($file->getRealPath());
 
         $response = $this
             ->actingAs($user)
@@ -84,20 +90,56 @@ describe('client resumes', function (): void {
 
         expect($resume->user_id)->toBe($user->id)
             ->and($resume->disk)->toBe('resumes')
-            ->and($resume->path)->toMatch('/^' . preg_quote((string) $user->id, '/') . '\/[0-9a-f-]{36}\.pdf$/')
+            ->and($resume->path)->toMatch('/^[0-9a-f-]{36}\.enc$/')
             ->and($resume->status)->toBe(UserResumeStatus::Pending)
             ->and($resume->extracted_text)->toBeNull()
-            ->and($resume->metadata)->toBeNull()
+            ->and($resume->metadata['encryption']['algorithm'])
+            ->toBe('secretstream-xchacha20poly1305')
+            ->and($resume->metadata['processing']['id'])->toBeString()
             ->and($resume->processed_at)->toBeNull();
 
         Storage::disk('resumes')->assertExists($resume->path);
+        $storedContent = Storage::disk('resumes')->get($resume->path);
+        expect($storedContent)->not->toBe($originalContent)
+            ->and($storedContent)->not->toStartWith('%PDF-');
+
+        $decrypted = app(EncryptedResumeStorage::class)->decrypt($resume);
+        expect(stream_get_contents($decrypted))->toBe($originalContent);
+        fclose($decrypted);
+
+        $rawResume = DB::table('user_resumes')->find($resume->id);
+        expect($rawResume->name)->not->toContain('Currículo principal')
+            ->and($rawResume->original_filename)->not->toContain('curriculo-gustavo.pdf')
+            ->and($rawResume->metadata)->not->toContain('storage_id');
 
         Queue::assertPushed(
             ProcessUserResumeJob::class,
             fn (ProcessUserResumeJob $job): bool => $job->resumeId === $resume->id
+                && $job->userId === $user->id
+                && $job->processingId === $resume->metadata['processing']['id']
                 && $job->queue === 'resume-processing'
                 && $job->afterCommit === true,
         );
+    });
+
+    it('rejects a modified encrypted resume container', function (): void {
+        $file = UploadedFile::fake()->createWithContent('resume.pdf', '%PDF-private');
+        $encrypted = app(EncryptedResumeStorage::class)->store($file);
+        $processingId = (string) Str::uuid();
+        $resume = UserResume::factory()->create([
+            'disk' => 'resumes',
+            'path' => $encrypted->path,
+            'metadata' => [
+                'encryption' => $encrypted->metadata,
+                'processing' => ['id' => $processingId],
+            ],
+        ]);
+        $container = Storage::disk('resumes')->get($resume->path);
+        $container[50] = chr(ord($container[50]) ^ 1);
+        Storage::disk('resumes')->put($resume->path, $container);
+
+        expect(fn () => app(EncryptedResumeStorage::class)->decrypt($resume))
+            ->toThrow(ResumeEncryptionException::class);
     });
 
     it('makes the uploaded resume the only primary resume when requested', function (): void {
