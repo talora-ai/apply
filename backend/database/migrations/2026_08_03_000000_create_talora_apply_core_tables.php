@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\UserResumeStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -90,7 +91,7 @@ return new class extends Migration
             $table->string('path');
             $table->string('mime_type', 100);
             $table->unsignedBigInteger('size');
-            $table->string('status')->default('pending')->index();
+            $table->string('status')->default(UserResumeStatus::Pending->value)->index();
             $table->boolean('is_primary')->default(false)->index();
             $table->text('extracted_text')->nullable();
             $table->json('metadata')->nullable();

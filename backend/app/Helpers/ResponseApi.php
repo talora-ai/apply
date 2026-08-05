@@ -32,7 +32,7 @@ final class ResponseApi
         ?string $message = null,
         array|Collection|LengthAwarePaginator $data = [],
         ?int $code = null
-    ): JsonResponse|Response {
+    ): JsonResponse {
         $code = $code ?? self::defaultSuccessCode;
         $message = $message ?? self::defaultSuccessMessage;
 
@@ -87,7 +87,7 @@ final class ResponseApi
         string $message = self::defaultSuccessMessage,
         array|Collection|LengthAwarePaginator $data = [],
         int $code = self::defaultSuccessCode
-    ): JsonResponse|Response {
+    ): JsonResponse {
         return self::handle(
             $message,
             $data,
@@ -99,7 +99,7 @@ final class ResponseApi
         string $message = self::defaultErrorMessage,
         array|Collection|LengthAwarePaginator $data = [],
         int $code = self::defaultErrorCode
-    ): JsonResponse|Response {
+    ): JsonResponse {
 
         self::handleLog($message, $data, $code);
 

@@ -25,12 +25,27 @@ final class JobApplication extends Model
     {
         return [
             'compatibility_score' => 'decimal:2', 'is_automatic' => 'boolean',
-            'applied_at' => 'datetime', 'last_status_at' => 'datetime', 'metadata' => 'array',
+            'applied_at'          => 'datetime', 'last_status_at' => 'datetime', 'metadata' => 'array',
         ];
     }
 
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
-    public function jobPosting(): BelongsTo { return $this->belongsTo(JobPosting::class); }
-    public function resume(): BelongsTo { return $this->belongsTo(UserResume::class, 'user_resume_id'); }
-    public function events(): HasMany { return $this->hasMany(JobApplicationEvent::class); }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function jobPosting(): BelongsTo
+    {
+        return $this->belongsTo(JobPosting::class);
+    }
+
+    public function resume(): BelongsTo
+    {
+        return $this->belongsTo(UserResume::class, 'user_resume_id');
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(JobApplicationEvent::class);
+    }
 }

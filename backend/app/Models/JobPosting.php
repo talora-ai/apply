@@ -25,15 +25,34 @@ final class JobPosting extends Model
     protected function casts(): array
     {
         return [
-            'salary_min' => 'decimal:2', 'salary_max' => 'decimal:2',
-            'published_at' => 'datetime', 'expires_at' => 'datetime',
+            'salary_min'     => 'decimal:2', 'salary_max' => 'decimal:2',
+            'published_at'   => 'datetime', 'expires_at' => 'datetime',
             'last_synced_at' => 'datetime', 'metadata' => 'array',
         ];
     }
 
-    public function company(): BelongsTo { return $this->belongsTo(Company::class); }
-    public function source(): BelongsTo { return $this->belongsTo(JobSource::class, 'job_source_id'); }
-    public function applications(): HasMany { return $this->hasMany(JobApplication::class); }
-    public function favorites(): HasMany { return $this->hasMany(JobFavorite::class); }
-    public function compatibilityAnalyses(): HasMany { return $this->hasMany(JobCompatibilityAnalysis::class); }
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function source(): BelongsTo
+    {
+        return $this->belongsTo(JobSource::class, 'job_source_id');
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(JobApplication::class);
+    }
+
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(JobFavorite::class);
+    }
+
+    public function compatibilityAnalyses(): HasMany
+    {
+        return $this->hasMany(JobCompatibilityAnalysis::class);
+    }
 }

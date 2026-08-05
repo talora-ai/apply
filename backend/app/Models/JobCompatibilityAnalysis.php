@@ -26,17 +26,32 @@ final class JobCompatibilityAnalysis extends Model
     protected function casts(): array
     {
         return [
-            'overall_score' => 'decimal:2', 'skills_score' => 'decimal:2',
+            'overall_score'    => 'decimal:2', 'skills_score' => 'decimal:2',
             'experience_score' => 'decimal:2', 'education_score' => 'decimal:2',
-            'location_score' => 'decimal:2', 'estimated_cost' => 'decimal:6',
-            'matching_skills' => 'array', 'missing_skills' => 'array',
-            'strengths' => 'array', 'risks' => 'array', 'suggestions' => 'array',
-            'raw_response' => 'array', 'started_at' => 'datetime', 'completed_at' => 'datetime',
+            'location_score'   => 'decimal:2', 'estimated_cost' => 'decimal:6',
+            'matching_skills'  => 'array', 'missing_skills' => 'array',
+            'strengths'        => 'array', 'risks' => 'array', 'suggestions' => 'array',
+            'raw_response'     => 'array', 'started_at' => 'datetime', 'completed_at' => 'datetime',
         ];
     }
 
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
-    public function resume(): BelongsTo { return $this->belongsTo(UserResume::class, 'user_resume_id'); }
-    public function jobPosting(): BelongsTo { return $this->belongsTo(JobPosting::class); }
-    public function resumeAnalysis(): BelongsTo { return $this->belongsTo(ResumeAnalysis::class); }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function resume(): BelongsTo
+    {
+        return $this->belongsTo(UserResume::class, 'user_resume_id');
+    }
+
+    public function jobPosting(): BelongsTo
+    {
+        return $this->belongsTo(JobPosting::class);
+    }
+
+    public function resumeAnalysis(): BelongsTo
+    {
+        return $this->belongsTo(ResumeAnalysis::class);
+    }
 }

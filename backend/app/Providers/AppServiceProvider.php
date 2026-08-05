@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Contracts\Bots\ResumeBotClient;
+use App\Models\UserResume;
+use App\Policies\UserResumePolicy;
+use App\Services\Bots\HttpResumeBotClient;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(ResumeBotClient::class, HttpResumeBotClient::class);
     }
 
     /**
@@ -21,6 +26,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::policy(UserResume::class, UserResumePolicy::class);
     }
 }

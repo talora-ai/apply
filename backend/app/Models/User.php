@@ -23,6 +23,7 @@ class User extends Authenticatable
 
     /** @use HasFactory<UserFactory> */
     use HasFactory;
+
     use HasTaloraApplyRelations;
     use Notifiable;
     use SoftDeletes;

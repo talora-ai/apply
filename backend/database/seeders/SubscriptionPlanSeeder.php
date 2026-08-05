@@ -13,11 +13,11 @@ final class SubscriptionPlanSeeder extends Seeder
     {
         foreach ([
             [
-                'name' => 'Free', 'slug' => 'free', 'description' => 'Recursos essenciais para começar.',
+                'name'  => 'Free', 'slug' => 'free', 'description' => 'Recursos essenciais para começar.',
                 'price' => 0, 'features' => ['1 currículo', 'Pesquisas manuais', 'Análise básica'], 'sort_order' => 1,
             ],
             [
-                'name' => 'Premium', 'slug' => 'premium', 'description' => 'Automação e análises avançadas para acelerar sua carreira.',
+                'name'  => 'Premium', 'slug' => 'premium', 'description' => 'Automação e análises avançadas para acelerar sua carreira.',
                 'price' => 39.90, 'features' => ['Currículos ilimitados', 'Candidatura automática', 'Análises avançadas', 'Prioridade de processamento'], 'sort_order' => 2,
             ],
         ] as $plan) {

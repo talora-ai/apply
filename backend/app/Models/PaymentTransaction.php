@@ -24,6 +24,13 @@ final class PaymentTransaction extends Model
         return ['amount' => 'decimal:2', 'processed_at' => 'datetime', 'metadata' => 'array'];
     }
 
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
-    public function subscription(): BelongsTo { return $this->belongsTo(UserSubscription::class, 'user_subscription_id'); }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function subscription(): BelongsTo
+    {
+        return $this->belongsTo(UserSubscription::class, 'user_subscription_id');
+    }
 }

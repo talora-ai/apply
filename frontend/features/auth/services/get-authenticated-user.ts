@@ -20,7 +20,7 @@ export async function getAuthenticatedUser(): Promise<AuthenticatedUser | null> 
     let response: Response;
 
     try {
-        response = await fetch(`${apiUrl}/user`, {
+        response = await fetch(`${apiUrl}/client/user`, {
             method: "GET",
             headers: {
                 Accept: "application/json",
