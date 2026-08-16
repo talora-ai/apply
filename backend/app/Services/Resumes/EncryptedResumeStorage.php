@@ -73,10 +73,10 @@ final class EncryptedResumeStorage
             return new EncryptedResume(
                 path: $path,
                 metadata: [
-                    'storage_id' => $storageId,
-                    'algorithm' => 'secretstream-xchacha20poly1305',
-                    'key_version' => (string) config('resumes.encryption.key_version', 'v1'),
-                    'wrapped_key' => $this->wrapKey($dataKey, $storageId),
+                    'storage_id'       => $storageId,
+                    'algorithm'        => 'secretstream-xchacha20poly1305',
+                    'key_version'      => (string) config('resumes.encryption.key_version', 'v1'),
+                    'wrapped_key'      => $this->wrapKey($dataKey, $storageId),
                     'plaintext_sha256' => hash_final($hash),
                 ],
             );

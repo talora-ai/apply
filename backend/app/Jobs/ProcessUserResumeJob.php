@@ -57,7 +57,7 @@ final class ProcessUserResumeJob implements ShouldQueue
         }
 
         $resume->update([
-            'status' => UserResumeStatus::Processing,
+            'status'       => UserResumeStatus::Processing,
             'processed_at' => null,
         ]);
 
@@ -76,15 +76,15 @@ final class ProcessUserResumeJob implements ShouldQueue
             $metadata = $resume->metadata ?? [];
             $metadata = array_replace_recursive($metadata, $result->metadata());
             $metadata['processing'] = [
-                'id' => $this->processingId,
+                'id'           => $this->processingId,
                 'completed_at' => now()->toISOString(),
             ];
 
             $resume->update([
-                'status' => UserResumeStatus::Completed,
+                'status'         => UserResumeStatus::Completed,
                 'extracted_text' => $result->fullText,
-                'metadata' => $metadata,
-                'processed_at' => now(),
+                'metadata'       => $metadata,
+                'processed_at'   => now(),
             ]);
         });
     }
@@ -113,7 +113,7 @@ final class ProcessUserResumeJob implements ShouldQueue
 
         $metadata = $resume->metadata ?? [];
         $metadata['processing'] = [
-            'id' => $this->processingId,
+            'id'           => $this->processingId,
             'failure_code' => $exception instanceof ResumeBotException
                 ? $exception->errorCode
                 : 'BOT_PROCESSING_FAILED',
@@ -121,8 +121,8 @@ final class ProcessUserResumeJob implements ShouldQueue
         ];
 
         $resume->update([
-            'status' => UserResumeStatus::Failed,
-            'metadata' => $metadata,
+            'status'       => UserResumeStatus::Failed,
+            'metadata'     => $metadata,
             'processed_at' => null,
         ]);
     }

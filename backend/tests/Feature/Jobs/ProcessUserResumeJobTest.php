@@ -10,8 +10,8 @@ use App\Models\User;
 use App\Models\UserResume;
 use App\Services\Resumes\EncryptedResumeStorage;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -19,55 +19,55 @@ function validResumeBotPayload(string $processingId, string $documentHash): arra
 {
     return [
         'schema_version' => '1.4',
-        'processing_id' => $processingId,
-        'document' => [
-            'filename' => 'resume.pdf',
-            'mime_type' => 'application/pdf',
-            'page_count' => 1,
+        'processing_id'  => $processingId,
+        'document'       => [
+            'filename'        => 'resume.pdf',
+            'mime_type'       => 'application/pdf',
+            'page_count'      => 1,
             'character_count' => 120,
-            'sha256' => $documentHash,
-            'metadata' => [
+            'sha256'          => $documentHash,
+            'metadata'        => [
                 'encrypted' => false,
             ],
             'ats' => [
-                'ats_friendly' => false,
-                'confidence' => 0.96,
-                'layout_type' => 'multi_column',
+                'ats_friendly'       => false,
+                'confidence'         => 0.96,
+                'layout_type'        => 'multi_column',
                 'extraction_quality' => 'partial',
-                'reason_codes' => [
+                'reason_codes'       => [
                     'multi_column_layout',
                     'ambiguous_reading_order',
                 ],
                 'metrics' => [
-                    'text_blocks' => 20,
-                    'images' => 1,
-                    'drawings' => 15,
+                    'text_blocks'           => 20,
+                    'images'                => 1,
+                    'drawings'              => 15,
                     'selectable_characters' => 120,
-                    'multi_column_pages' => 1,
+                    'multi_column_pages'    => 1,
                 ],
             ],
         ],
         'content' => [
             'full_text' => 'Gustavo Martim Backend Engineer PHP Laravel',
-            'sections' => [
-                'summary' => ['Backend Engineer'],
-                'skills' => ['PHP', 'Laravel'],
+            'sections'  => [
+                'summary'     => ['Backend Engineer'],
+                'skills'      => ['PHP', 'Laravel'],
                 'experiences' => [[
-                    'position' => 'Backend Engineer',
-                    'company' => 'Talora',
-                    'period' => '2024-Atual',
-                    'start_date' => '2024',
-                    'end_date' => null,
-                    'is_current' => true,
+                    'position'    => 'Backend Engineer',
+                    'company'     => 'Talora',
+                    'period'      => '2024-Atual',
+                    'start_date'  => '2024',
+                    'end_date'    => null,
+                    'is_current'  => true,
                     'description' => ['Desenvolvimento de APIs REST.'],
                 ]],
                 'education' => ['Engenharia de Software'],
                 'languages' => [[
-                    'name' => 'Português',
+                    'name'        => 'Português',
                     'proficiency' => 'Nativo',
                 ]],
                 'projects' => [[
-                    'name' => 'Talora Apply',
+                    'name'        => 'Talora Apply',
                     'description' => ['Plataforma de apoio a candidaturas.'],
                 ]],
                 'certifications' => [],
@@ -84,14 +84,14 @@ function createPendingResume(?User $user = null, ?string $processingId = null): 
         UploadedFile::fake()->createWithContent('resume.pdf', $content),
     );
     $resume = UserResume::factory()->create([
-        'user_id' => $user?->id ?? User::factory(),
-        'disk' => 'resumes',
-        'path' => $encrypted->path,
+        'user_id'           => $user?->id ?? User::factory(),
+        'disk'              => 'resumes',
+        'path'              => $encrypted->path,
         'original_filename' => 'resume.pdf',
-        'mime_type' => 'application/pdf',
-        'status' => UserResumeStatus::Pending,
-        'extracted_text' => null,
-        'metadata' => [
+        'mime_type'         => 'application/pdf',
+        'status'            => UserResumeStatus::Pending,
+        'extracted_text'    => null,
+        'metadata'          => [
             'encryption' => $encrypted->metadata,
             'processing' => ['id' => $processingId],
         ],
@@ -198,9 +198,9 @@ describe(ProcessUserResumeJob::class, function (): void {
         Http::fake();
         $processingId = (string) Str::uuid();
         $resume = UserResume::factory()->create([
-            'disk' => 'resumes',
-            'path' => 'missing/resume.pdf',
-            'status' => UserResumeStatus::Pending,
+            'disk'     => 'resumes',
+            'path'     => 'missing/resume.pdf',
+            'status'   => UserResumeStatus::Pending,
             'metadata' => [
                 'processing' => [
                     'id' => $processingId,
@@ -264,7 +264,7 @@ describe(ProcessUserResumeJob::class, function (): void {
         Http::fake([
             'http://localhost:9000/api/v1/resumes/extract' => Http::response([
                 'error' => [
-                    'code' => 'INVALID_PDF',
+                    'code'    => 'INVALID_PDF',
                     'message' => 'Technical Bot message that must not be persisted.',
                 ],
             ], 422),
@@ -294,18 +294,18 @@ describe(ProcessUserResumeJob::class, function (): void {
         $user = User::factory()->create();
         $payload = validResumeBotPayload((string) Str::uuid(), str_repeat('a', 64));
         $resume = UserResume::factory()->for($user)->create([
-            'status' => UserResumeStatus::Completed,
+            'status'         => UserResumeStatus::Completed,
             'extracted_text' => $payload['content']['full_text'],
-            'metadata' => [
+            'metadata'       => [
                 'schema_version' => '1.4',
-                'processing_id' => $payload['processing_id'],
-                'document' => [
-                    'page_count' => 1,
+                'processing_id'  => $payload['processing_id'],
+                'document'       => [
+                    'page_count'      => 1,
                     'character_count' => 120,
-                    'sha256' => $payload['document']['sha256'],
-                    'metadata' => [],
+                    'sha256'          => $payload['document']['sha256'],
+                    'metadata'        => [],
                 ],
-                'ats' => $payload['document']['ats'],
+                'ats'      => $payload['document']['ats'],
                 'sections' => $payload['content']['sections'],
             ],
             'processed_at' => now(),

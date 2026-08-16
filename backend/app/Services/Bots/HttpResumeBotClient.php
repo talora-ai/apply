@@ -56,11 +56,11 @@ final class HttpResumeBotClient implements ResumeBotClient
             $response = Http::acceptJson()
                 ->withToken($token)
                 ->withHeaders([
-                    'X-Talora-Processing-Id' => $processingId,
-                    'X-Talora-Timestamp' => $timestamp,
-                    'X-Talora-Nonce' => $nonce,
+                    'X-Talora-Processing-Id'  => $processingId,
+                    'X-Talora-Timestamp'      => $timestamp,
+                    'X-Talora-Nonce'          => $nonce,
                     'X-Talora-Content-SHA256' => $contentHash,
-                    'X-Talora-Signature' => $signature,
+                    'X-Talora-Signature'      => $signature,
                 ])
                 ->connectTimeout((int) config('services.bot.connect_timeout', 5))
                 ->timeout((int) config('services.bot.timeout', 45))
