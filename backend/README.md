@@ -32,6 +32,7 @@ The API is responsible for authentication, user data, resume processing workflow
 - Composer
 - MySQL
 - PHP extensions required by Laravel
+- PHP Sodium extension
 - Mailpit, Docker, or another SMTP server
 
 ## Installation
@@ -125,6 +126,61 @@ For an asynchronous queue:
 ```bash
 php artisan queue:work
 ```
+
+### Resume processing Bot
+
+Resume files remain on the private `resumes` disk. The queue worker sends the
+file directly to the Bot over an authenticated internal request and persists
+only the validated extraction result in `user_resumes`.
+
+Configure the integration in `.env`:
+
+```dotenv
+BOT_URL=http://localhost:9000
+BOT_SERVICE_TOKEN=replace-with-the-same-private-token-used-by-the-bot
+BOT_SIGNING_SECRET=replace-with-a-different-random-signing-secret
+BOT_CONNECT_TIMEOUT=5
+BOT_TIMEOUT=45
+BOT_MAX_RESPONSE_KB=2048
+RESUME_ENCRYPTION_KEY=base64-encoded-32-byte-file-key
+RESUME_ENCRYPTION_KEY_VERSION=v1
+RESUME_DATA_ENCRYPTION_KEY=base64-encoded-32-byte-database-key
+RESUME_DATA_ENCRYPTION_KEY_VERSION=v1
+```
+
+Generate every secret independently. Never reuse `APP_KEY`, the Bot service
+token, the signing secret, or one resume encryption key for another purpose:
+
+```bash
+php -r "echo base64_encode(random_bytes(32)), PHP_EOL;"
+```
+
+Do not replace either encryption key directly after data exists. Key rotation
+requires rewrapping file data keys and re-encrypting protected database fields
+under a controlled migration.
+
+Start the dedicated worker:
+
+```bash
+php artisan queue:work --queue=resume-processing --tries=3 --timeout=60
+```
+
+Processing flow:
+
+1. The upload is stored privately and the resume starts with `pending` status.
+2. `ProcessUserResumeJob` changes the status to `processing` and calls
+   `POST http://localhost:9000/api/v1/resumes/extract`.
+3. The file is stored only as an authenticated encrypted `.enc` container. Its
+   one-time data key is wrapped by the Backend file-encryption key.
+4. The Backend decrypts the document in a memory-backed stream and signs its
+   SHA-256, processing ID, timestamp, and nonce before sending it to the Bot.
+5. Responses are accepted only when they match Bot schema `1.4`, the original
+   processing ID, and the exact document SHA-256.
+6. Extracted text, original filenames, structured sections, document metadata,
+   and the ATS assessment are encrypted before persistence; the status changes
+   to `completed`.
+7. After the final failed attempt, only a safe failure code is persisted and
+   the status changes to `failed`. Raw Bot errors are never returned to users.
 
 ## Running the application
 
