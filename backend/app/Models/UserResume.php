@@ -17,6 +17,7 @@ final class UserResume extends Model
 {
     /** @use HasFactory<UserResumeFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $fillable = [

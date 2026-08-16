@@ -9,8 +9,8 @@ use App\Models\User;
 use App\Models\UserResume;
 use App\Services\Resumes\EncryptedResumeStorage;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -127,8 +127,8 @@ describe('client resumes', function (): void {
         $encrypted = app(EncryptedResumeStorage::class)->store($file);
         $processingId = (string) Str::uuid();
         $resume = UserResume::factory()->create([
-            'disk' => 'resumes',
-            'path' => $encrypted->path,
+            'disk'     => 'resumes',
+            'path'     => $encrypted->path,
             'metadata' => [
                 'encryption' => $encrypted->metadata,
                 'processing' => ['id' => $processingId],

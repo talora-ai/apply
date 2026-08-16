@@ -26,11 +26,11 @@ return [
     ],
 
     'bot' => [
-        'url' => env('BOT_URL', 'http://localhost:9000'),
-        'token' => env('BOT_SERVICE_TOKEN'),
-        'signing_secret' => env('BOT_SIGNING_SECRET'),
+        'url'             => env('BOT_URL', 'http://localhost:9000'),
+        'token'           => env('BOT_SERVICE_TOKEN'),
+        'signing_secret'  => env('BOT_SIGNING_SECRET'),
         'connect_timeout' => (int) env('BOT_CONNECT_TIMEOUT', 5),
-        'timeout' => (int) env('BOT_TIMEOUT', 45),
+        'timeout'         => (int) env('BOT_TIMEOUT', 45),
         'max_response_kb' => (int) env('BOT_MAX_RESPONSE_KB', 2048),
     ],
 

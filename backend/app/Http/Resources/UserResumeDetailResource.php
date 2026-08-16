@@ -16,12 +16,12 @@ final class UserResumeDetailResource extends JsonResource
 
         return [
             ...(new UserResumeResource($this->resource))->resolve($request),
-            'ats' => $metadata['ats'] ?? null,
+            'ats'     => $metadata['ats'] ?? null,
             'content' => $this->when(
                 $this->status === UserResumeStatus::Completed,
                 [
                     'full_text' => $this->extracted_text,
-                    'sections' => $metadata['sections'] ?? [],
+                    'sections'  => $metadata['sections'] ?? [],
                 ],
             ),
             'processing_error' => $this->when(
