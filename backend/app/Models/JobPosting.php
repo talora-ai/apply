@@ -50,9 +50,4 @@ final class JobPosting extends Model
     {
         return $this->hasMany(JobFavorite::class);
     }
-
-    public function compatibilityAnalyses(): HasMany
-    {
-        return $this->hasMany(JobCompatibilityAnalysis::class);
-    }
 }

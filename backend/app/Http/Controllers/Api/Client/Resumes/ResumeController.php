@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Client\Resumes;
 
 use App\Actions\Resumes\StoreUserResumeAction;
+use App\Enums\UserResumeStatus;
 use App\Helpers\ResponseApi;
 use App\Http\ApiRequests\Client\Resumes\StoreResumeRequest;
 use App\Http\Controllers\Controller;
@@ -14,6 +15,8 @@ use App\Models\UserResume;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 final class ResumeController extends Controller
 {
@@ -41,7 +44,6 @@ final class ResumeController extends Controller
                 user: $request->user(),
                 file: $request->file('file'),
                 name: $request->string('name')->toString(),
-                isPrimary: $request->boolean('is_primary'),
             );
 
             return ResponseApi::success(
@@ -64,9 +66,40 @@ final class ResumeController extends Controller
         }
     }
 
+    public function setPrimary(Request $request, UserResume $resume): JsonResponse
+    {
+        $this->authorize('view', $resume);
+
+        if ($resume->status !== UserResumeStatus::Completed) {
+            return ResponseApi::error(
+                'Resume is not ready',
+                ['message' => 'Only processed resumes can be selected as primary.'],
+                422,
+            );
+        }
+
+        DB::transaction(function () use ($request, $resume): void {
+            $request->user()->resumes()
+                ->where('is_primary', true)
+                ->where($resume->getKeyName(), '!=', $resume->getKey())
+                ->update(['is_primary' => false]);
+
+            if (! $resume->is_primary) {
+                $resume->update(['is_primary' => true]);
+            }
+        });
+
+        return ResponseApi::success(
+            'Primary resume updated successfully.',
+            ['resume' => (new UserResumeResource($resume->refresh()))->resolve($request)],
+        );
+    }
+
     public function show(Request $request, UserResume $resume): JsonResponse
     {
         $this->authorize('view', $resume);
+
+        $resume->load('latestAnalysis');
 
         return ResponseApi::success(
             'Resume retrieved successfully.',
@@ -81,7 +114,13 @@ final class ResumeController extends Controller
         $this->authorize('delete', $resume);
 
         try {
-            $resume->delete();
+            if (Storage::disk($resume->disk)->exists($resume->path)) {
+                Storage::disk($resume->disk)->delete($resume->path);
+            }
+
+            DB::transaction(function () use ($resume): void {
+                $resume->delete();
+            });
 
             return ResponseApi::success('Resume deleted successfully.');
         } catch (Exception $exception) {

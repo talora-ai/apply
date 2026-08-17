@@ -17,14 +17,14 @@ final class JobApplication extends Model
 
     protected $fillable = [
         'user_id', 'job_posting_id', 'user_resume_id', 'status',
-        'compatibility_score', 'is_automatic', 'applied_at', 'last_status_at',
+        'is_automatic', 'applied_at', 'last_status_at',
         'failure_reason', 'metadata',
     ];
 
     protected function casts(): array
     {
         return [
-            'compatibility_score' => 'decimal:2', 'is_automatic' => 'boolean',
+            'is_automatic' => 'boolean',
             'applied_at'          => 'datetime', 'last_status_at' => 'datetime', 'metadata' => 'array',
         ];
     }

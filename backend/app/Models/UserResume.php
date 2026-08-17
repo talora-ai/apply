@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 final class UserResume extends Model
@@ -48,9 +49,9 @@ final class UserResume extends Model
         return $this->hasMany(ResumeAnalysis::class);
     }
 
-    public function compatibilityAnalyses(): HasMany
+    public function latestAnalysis(): HasOne
     {
-        return $this->hasMany(JobCompatibilityAnalysis::class);
+        return $this->hasOne(ResumeAnalysis::class)->latestOfMany();
     }
 
     public function applications(): HasMany

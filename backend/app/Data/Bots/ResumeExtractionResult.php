@@ -33,6 +33,7 @@ final readonly class ResumeExtractionResult
             'document.metadata'                            => ['present', 'array'],
             'document.ats'                                 => ['required', 'array'],
             'document.ats.ats_friendly'                    => ['required', 'boolean'],
+            'document.ats.score'                           => ['sometimes', 'nullable', 'integer', 'between:0,100'],
             'document.ats.confidence'                      => ['required', 'numeric', 'between:0,1'],
             'document.ats.layout_type'                     => ['required', 'string', 'max:50'],
             'document.ats.extraction_quality'              => ['required', 'string', 'max:50'],

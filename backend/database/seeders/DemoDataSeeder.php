@@ -6,7 +6,6 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\JobApplication;
-use App\Models\JobCompatibilityAnalysis;
 use App\Models\JobFavorite;
 use App\Models\JobPosting;
 use App\Models\JobSource;
@@ -57,21 +56,12 @@ final class DemoDataSeeder extends Seeder
                 'is_primary' => true,
             ]);
 
-            $resumeAnalysis = ResumeAnalysis::factory()->create([
+            ResumeAnalysis::factory()->create([
                 'user_id'        => $user->id,
                 'user_resume_id' => $resume->id,
             ]);
 
             $jobs = JobPosting::query()->inRandomOrder()->limit(6)->get();
-
-            $analyses = $jobs->map(
-                fn (JobPosting $job): JobCompatibilityAnalysis => JobCompatibilityAnalysis::factory()->create([
-                    'user_id'            => $user->id,
-                    'user_resume_id'     => $resume->id,
-                    'job_posting_id'     => $job->id,
-                    'resume_analysis_id' => $resumeAnalysis->id,
-                ]),
-            );
 
             $jobs->take(3)->each(
                 fn (JobPosting $job): JobFavorite => JobFavorite::factory()->create([
@@ -80,14 +70,12 @@ final class DemoDataSeeder extends Seeder
                 ]),
             );
 
-            $analyses->sortByDesc('overall_score')->take(2)->each(
-                function (JobCompatibilityAnalysis $analysis) use ($user, $resume): void {
+            $jobs->take(2)->each(
+                function (JobPosting $job) use ($user, $resume): void {
                     $application = JobApplication::factory()->create([
-                        'user_id'             => $user->id,
-                        'user_resume_id'      => $resume->id,
-                        'job_posting_id'      => $analysis->job_posting_id,
-                        'compatibility_score' => $analysis->overall_score,
-                        'is_automatic'        => (float) $analysis->overall_score >= 90,
+                        'user_id'        => $user->id,
+                        'user_resume_id' => $resume->id,
+                        'job_posting_id' => $job->id,
                     ]);
 
                     $application->events()->createMany([

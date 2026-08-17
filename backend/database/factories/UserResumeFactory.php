@@ -15,6 +15,6 @@ final class UserResumeFactory extends Factory
     {
         $filename = Str::slug(fake()->name()) . '-resume.pdf';
 
-        return ['user_id' => User::factory(), 'name' => 'Currículo principal', 'original_filename' => $filename, 'disk' => 'local', 'path' => 'resumes/demo/' . $filename, 'mime_type' => 'application/pdf', 'size' => fake()->numberBetween(50_000, 500_000), 'status' => UserResumeStatus::Completed, 'is_primary' => true, 'extracted_text' => fake()->paragraphs(6, true), 'metadata' => null, 'processed_at' => now()];
+        return ['user_id' => User::factory(), 'name' => 'Currículo principal', 'original_filename' => $filename, 'disk' => 'local', 'path' => 'resumes/demo/' . $filename, 'mime_type' => 'application/pdf', 'size' => fake()->numberBetween(50_000, 500_000), 'status' => UserResumeStatus::Completed, 'is_primary' => false, 'extracted_text' => fake()->paragraphs(6, true), 'metadata' => null, 'processed_at' => now()];
     }
 }

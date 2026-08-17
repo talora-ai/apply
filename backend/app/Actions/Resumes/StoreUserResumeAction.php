@@ -9,6 +9,7 @@ use App\Jobs\ProcessUserResumeJob;
 use App\Models\User;
 use App\Models\UserResume;
 use App\Services\Resumes\EncryptedResumeStorage;
+use App\Services\Resumes\ResumeEncryptionConfiguration;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -19,14 +20,19 @@ final class StoreUserResumeAction
 {
     private const DISK = 'resumes';
 
-    public function __construct(private readonly EncryptedResumeStorage $encryptedStorage) {}
+    public function __construct(
+        private readonly EncryptedResumeStorage $encryptedStorage,
+        private readonly ResumeEncryptionConfiguration $encryptionConfiguration,
+    ) {}
 
     public function execute(
         User $user,
         UploadedFile $file,
         string $name,
-        bool $isPrimary = false,
     ): UserResume {
+        // Fail before touching storage when either encryption key is missing/invalid.
+        $this->encryptionConfiguration->assertReady();
+
         $encryptedResume = null;
 
         try {
@@ -37,16 +43,9 @@ final class StoreUserResumeAction
                 $user,
                 $file,
                 $name,
-                $isPrimary,
                 $encryptedResume,
                 $processingId,
             ): UserResume {
-                if ($isPrimary) {
-                    $user->resumes()
-                        ->where('is_primary', true)
-                        ->update(['is_primary' => false]);
-                }
-
                 $resume = $user->resumes()->create([
                     'name'              => $name,
                     'original_filename' => $file->getClientOriginalName(),
@@ -55,7 +54,7 @@ final class StoreUserResumeAction
                     'mime_type'         => $file->getMimeType() ?? $file->getClientMimeType(),
                     'size'              => $file->getSize(),
                     'status'            => UserResumeStatus::Pending,
-                    'is_primary'        => $isPrimary,
+                    'is_primary'        => false,
                     'metadata'          => [
                         'encryption' => $encryptedResume->metadata,
                         'processing' => [

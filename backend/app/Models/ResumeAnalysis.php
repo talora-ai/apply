@@ -8,7 +8,6 @@ use Database\Factories\ResumeAnalysisFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class ResumeAnalysis extends Model
 {
@@ -42,10 +41,5 @@ final class ResumeAnalysis extends Model
     public function resume(): BelongsTo
     {
         return $this->belongsTo(UserResume::class, 'user_resume_id');
-    }
-
-    public function compatibilityAnalyses(): HasMany
-    {
-        return $this->hasMany(JobCompatibilityAnalysis::class);
     }
 }

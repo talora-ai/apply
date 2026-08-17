@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models\Concerns;
 
 use App\Models\JobApplication;
-use App\Models\JobCompatibilityAnalysis;
 use App\Models\JobFavorite;
 use App\Models\PaymentTransaction;
 use App\Models\ResumeAnalysis;
@@ -23,11 +22,6 @@ trait HasTaloraApplyRelations
     public function resumeAnalyses(): HasMany
     {
         return $this->hasMany(ResumeAnalysis::class);
-    }
-
-    public function compatibilityAnalyses(): HasMany
-    {
-        return $this->hasMany(JobCompatibilityAnalysis::class);
     }
 
     public function jobApplications(): HasMany

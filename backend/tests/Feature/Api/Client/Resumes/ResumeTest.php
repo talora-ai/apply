@@ -19,6 +19,7 @@ describe('client resumes', function (): void {
         Storage::fake('resumes');
         Queue::fake();
         config()->set('resumes.encryption.key', base64_encode(str_repeat('k', 32)));
+        config()->set('resumes.data_encryption.key', base64_encode(str_repeat('d', 32)));
     });
 
     it('defines every resume processing status', function (): void {
@@ -37,6 +38,7 @@ describe('client resumes', function (): void {
         $this->postJson('/api/client/user/resumes')->assertUnauthorized();
         $this->getJson("/api/client/user/resumes/{$resume->id}")->assertUnauthorized();
         $this->deleteJson("/api/client/user/resumes/{$resume->id}")->assertUnauthorized();
+        $this->patchJson("/api/client/user/resumes/{$resume->id}/primary")->assertUnauthorized();
     });
 
     it('lists only resumes owned by the authenticated user', function (): void {
@@ -70,9 +72,8 @@ describe('client resumes', function (): void {
         $response = $this
             ->actingAs($user)
             ->postJson('/api/client/user/resumes', [
-                'name'       => 'Currículo principal',
-                'file'       => $file,
-                'is_primary' => true,
+                'name' => 'Currículo principal',
+                'file' => $file,
             ]);
 
         $response
@@ -82,7 +83,7 @@ describe('client resumes', function (): void {
             ->assertJsonPath('data.resume.name', 'Currículo principal')
             ->assertJsonPath('data.resume.original_filename', 'curriculo-gustavo.pdf')
             ->assertJsonPath('data.resume.status', 'pending')
-            ->assertJsonPath('data.resume.is_primary', true)
+            ->assertJsonPath('data.resume.is_primary', false)
             ->assertJsonMissingPath('data.resume.disk')
             ->assertJsonMissingPath('data.resume.path');
 
@@ -142,23 +143,42 @@ describe('client resumes', function (): void {
             ->toThrow(ResumeEncryptionException::class);
     });
 
-    it('makes the uploaded resume the only primary resume when requested', function (): void {
+    it('allows selecting only a processed resume as primary', function (): void {
         $user = User::factory()->create();
         $previousPrimary = UserResume::factory()->for($user)->create([
+            'status' => UserResumeStatus::Completed,
             'is_primary' => true,
+        ]);
+        $newPrimary = UserResume::factory()->for($user)->create([
+            'status' => UserResumeStatus::Completed,
+            'is_primary' => false,
         ]);
 
         $this
             ->actingAs($user)
-            ->postJson('/api/client/user/resumes', [
-                'name'       => 'Novo currículo principal',
-                'file'       => UploadedFile::fake()->create('resume.pdf', 100, 'application/pdf'),
-                'is_primary' => true,
-            ])
-            ->assertAccepted();
+            ->patchJson("/api/client/user/resumes/{$newPrimary->id}/primary")
+            ->assertOk()
+            ->assertJsonPath('data.resume.id', $newPrimary->id)
+            ->assertJsonPath('data.resume.is_primary', true);
 
         expect($previousPrimary->refresh()->is_primary)->toBeFalse()
+            ->and($newPrimary->refresh()->is_primary)->toBeTrue()
             ->and($user->resumes()->where('is_primary', true)->count())->toBe(1);
+    });
+
+    it('rejects selecting an unprocessed resume as primary', function (): void {
+        $user = User::factory()->create();
+        $resume = UserResume::factory()->for($user)->create([
+            'status' => UserResumeStatus::Processing,
+            'is_primary' => false,
+        ]);
+
+        $this
+            ->actingAs($user)
+            ->patchJson("/api/client/user/resumes/{$resume->id}/primary")
+            ->assertUnprocessable();
+
+        expect($resume->refresh()->is_primary)->toBeFalse();
     });
 
     it('validates the resume upload payload', function (array $payload, array $errors): void {

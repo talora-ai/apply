@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Contracts\Bots\ResumeBotClient;
+use App\Models\Admin;
 use App\Models\UserResume;
 use App\Policies\UserResumePolicy;
 use App\Services\Bots\HttpResumeBotClient;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,5 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(UserResume::class, UserResumePolicy::class);
+        Gate::define('viewPulse', fn (Admin $admin): bool => $admin->is_active);
+        Paginator::useBootstrapFive();
     }
 }
