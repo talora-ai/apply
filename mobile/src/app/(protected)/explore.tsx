@@ -1,180 +1,21 @@
-import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
+import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { SectionScreen } from "@/components/platform/section-screen";
+import { useAuth } from "@/features/auth/context/auth-context";
+import { favoriteJob, getJobs, unfavoriteJob } from "@/features/platform/services/platform-service";
+import type { Job, PrimaryResumeRef } from "@/features/platform/types/data";
 
-import { ExternalLink } from '@/components/external-link';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Collapsible } from '@/components/ui/collapsible';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-
-export default function TabTwoScreen() {
-  const safeAreaInsets = useSafeAreaInsets();
-  const insets = {
-    ...safeAreaInsets,
-    bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
-  };
-  const theme = useTheme();
-
-  const contentPlatformStyle = Platform.select({
-    android: {
-      paddingTop: insets.top,
-      paddingLeft: insets.left,
-      paddingRight: insets.right,
-      paddingBottom: insets.bottom,
-    },
-    web: {
-      paddingTop: Spacing.six,
-      paddingBottom: Spacing.four,
-    },
-  });
-
-  return (
-    <ScrollView
-      style={[styles.scrollView, { backgroundColor: theme.background }]}
-      contentInset={insets}
-      contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
-      <ThemedView style={styles.container}>
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="subtitle">Explore</ThemedText>
-          <ThemedText style={styles.centerText} themeColor="textSecondary">
-            This starter app includes example{'\n'}code to help you get started.
-          </ThemedText>
-
-          <ExternalLink href="https://docs.expo.dev" asChild>
-            <Pressable style={({ pressed }) => pressed && styles.pressed}>
-              <ThemedView type="backgroundElement" style={styles.linkButton}>
-                <ThemedText type="link">Expo documentation</ThemedText>
-                <SymbolView
-                  tintColor={theme.text}
-                  name={{ ios: 'arrow.up.right.square', android: 'link', web: 'link' }}
-                  size={12}
-                />
-              </ThemedView>
-            </Pressable>
-          </ExternalLink>
-        </ThemedView>
-
-        <ThemedView style={styles.sectionsWrapper}>
-          <Collapsible title="File-based routing">
-            <ThemedText type="small">
-              This app has two screens: <ThemedText type="code">src/app/index.tsx</ThemedText> and{' '}
-              <ThemedText type="code">src/app/explore.tsx</ThemedText>
-            </ThemedText>
-            <ThemedText type="small">
-              The layout file in <ThemedText type="code">src/app/_layout.tsx</ThemedText> sets up
-              the tab navigator.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/router/introduction">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Android, iOS, and web support">
-            <ThemedView type="backgroundElement" style={styles.collapsibleContent}>
-              <ThemedText type="small">
-                You can open this project on Android, iOS, and the web. To open the web version,
-                press <ThemedText type="smallBold">w</ThemedText> in the terminal running this
-                project.
-              </ThemedText>
-              <Image
-                source={require('@/assets/images/tutorial-web.png')}
-                style={styles.imageTutorial}
-              />
-            </ThemedView>
-          </Collapsible>
-
-          <Collapsible title="Images">
-            <ThemedText type="small">
-              For static images, you can use the <ThemedText type="code">@2x</ThemedText> and{' '}
-              <ThemedText type="code">@3x</ThemedText> suffixes to provide files for different
-              screen densities.
-            </ThemedText>
-            <Image source={require('@/assets/images/react-logo.png')} style={styles.imageReact} />
-            <ExternalLink href="https://reactnative.dev/docs/images">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Light and dark mode components">
-            <ThemedText type="small">
-              This template has light and dark mode support. The{' '}
-              <ThemedText type="code">useColorScheme()</ThemedText> hook lets you inspect what the
-              user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Animations">
-            <ThemedText type="small">
-              This template includes an example of an animated component. The{' '}
-              <ThemedText type="code">src/components/ui/collapsible.tsx</ThemedText> component uses
-              the powerful <ThemedText type="code">react-native-reanimated</ThemedText> library to
-              animate opening this hint.
-            </ThemedText>
-          </Collapsible>
-        </ThemedView>
-        {Platform.OS === 'web' && <WebBadge />}
-      </ThemedView>
-    </ScrollView>
-  );
+export default function ExploreScreen(){
+ const{token}=useAuth();const router=useRouter();const[q,setQ]=useState('');const[jobs,setJobs]=useState<Job[]>([]);const[primaryResume,setPrimaryResume]=useState<PrimaryResumeRef>(null);const[loading,setLoading]=useState(true);
+ const load=useCallback(async(search='')=>{if(!token)return;setLoading(true);try{const data=await getJobs(token,search);setJobs(data.jobs);setPrimaryResume(data.primary_resume)}finally{setLoading(false)}},[token]);
+ useFocusEffect(useCallback(()=>{void load();},[load]));
+ async function toggle(j:Job){if(!token)return;j.is_favorite?await unfavoriteJob(token,j.id):await favoriteJob(token,j.id);setJobs(v=>v.map(x=>x.id===j.id?{...x,is_favorite:!x.is_favorite}:x))}
+ return <SectionScreen title="Procurar vagas" subtitle="Compatibilidade calculada em tempo real com o currículo principal." icon="search-outline">
+  {primaryResume?<View style={s.info}><Ionicons name="document-text-outline" size={18} color="#9B84FF"/><Text style={s.infoText}>Comparando com <Text style={s.infoStrong}>{primaryResume.name}</Text></Text></View>:<Pressable onPress={()=>router.push('/resumes' as never)} style={s.warning}><Ionicons name="alert-circle-outline" size={18} color="#F8C15C"/><Text style={s.warningText}>Selecione um currículo processado como principal para ver compatibilidade.</Text></Pressable>}
+  <View style={s.search}><Ionicons name="search-outline" size={20} color="#64748B"/><TextInput value={q} onChangeText={setQ} onSubmitEditing={()=>void load(q)} style={s.input} placeholder="Cargo, tecnologia, local ou empresa" placeholderTextColor="#64748B"/><Pressable onPress={()=>void load(q)} style={s.button}><Ionicons name="search" size={19} color="#FFF"/></Pressable></View>
+  {loading?<ActivityIndicator color="#8B6CFF"/>:jobs.length?jobs.map(j=><View key={j.id} style={s.card}><View style={s.head}><View style={s.flex}><Text style={s.title}>{j.title}</Text><Text style={s.meta}>{j.company?.name??'Empresa não informada'}{j.location?` · ${j.location}`:''}</Text>{j.matching_skills?.length?<Text style={s.matches}>{j.matching_skills.join(' · ')}</Text>:null}</View><Pressable onPress={()=>void toggle(j)}><Ionicons name={j.is_favorite?'heart':'heart-outline'} size={22} color={j.is_favorite?'#15D0A5':'#94A3B8'}/></Pressable></View><View style={s.foot}><Text style={s.score}>{j.compatibility_score==null?'Sem análise':`${j.compatibility_score}% compatível`}</Text><Pressable onPress={()=>void Linking.openURL(j.application_url)}><Text style={s.link}>Abrir vaga</Text></Pressable></View></View>):<View style={s.empty}><Text style={s.emptyText}>Nenhuma vaga encontrada.</Text></View>}
+ </SectionScreen>
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  contentContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  container: {
-    maxWidth: MaxContentWidth,
-    flexGrow: 1,
-  },
-  titleContainer: {
-    gap: Spacing.three,
-    alignItems: 'center',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.six,
-  },
-  centerText: {
-    textAlign: 'center',
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  linkButton: {
-    flexDirection: 'row',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two,
-    borderRadius: Spacing.five,
-    justifyContent: 'center',
-    gap: Spacing.one,
-    alignItems: 'center',
-  },
-  sectionsWrapper: {
-    gap: Spacing.five,
-    paddingHorizontal: Spacing.four,
-    paddingTop: Spacing.three,
-  },
-  collapsibleContent: {
-    alignItems: 'center',
-  },
-  imageTutorial: {
-    width: '100%',
-    aspectRatio: 296 / 171,
-    borderRadius: Spacing.three,
-    marginTop: Spacing.two,
-  },
-  imageReact: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
-  },
-});
+const s=StyleSheet.create({info:{flexDirection:'row',gap:8,alignItems:'center',borderWidth:1,borderColor:'rgba(109,74,255,.35)',backgroundColor:'rgba(109,74,255,.10)',borderRadius:14,padding:12,marginBottom:12},infoText:{color:'#CBD5E1',fontSize:12,flex:1},infoStrong:{color:'#F8FAFC',fontWeight:'800'},warning:{flexDirection:'row',gap:8,alignItems:'flex-start',borderWidth:1,borderColor:'rgba(248,193,92,.35)',backgroundColor:'rgba(248,193,92,.10)',borderRadius:14,padding:12,marginBottom:12},warningText:{color:'#FDE7B3',fontSize:12,lineHeight:18,flex:1},search:{flexDirection:'row',alignItems:'center',gap:10,borderWidth:1,borderColor:'#334155',backgroundColor:'#161C2D',borderRadius:16,paddingLeft:14,paddingRight:7,paddingVertical:7,marginBottom:16},input:{flex:1,color:'#F8FAFC',minHeight:42},button:{width:42,height:42,borderRadius:12,backgroundColor:'#6D4AFF',alignItems:'center',justifyContent:'center'},card:{borderWidth:1,borderColor:'#1E293B',backgroundColor:'#161C2D',borderRadius:18,padding:16,marginBottom:10},head:{flexDirection:'row',gap:12},flex:{flex:1},title:{color:'#F8FAFC',fontWeight:'800'},meta:{color:'#64748B',fontSize:11,marginTop:5},matches:{color:'#475569',fontSize:10,lineHeight:15,marginTop:6},foot:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginTop:14},score:{color:'#15D0A5',fontSize:12,fontWeight:'800'},link:{color:'#9B84FF',fontWeight:'800'},empty:{borderWidth:1,borderStyle:'dashed',borderColor:'#334155',borderRadius:16,padding:20},emptyText:{color:'#64748B',textAlign:'center'}})

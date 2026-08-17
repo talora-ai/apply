@@ -31,7 +31,7 @@ export async function getAuthenticatedUser(
     token: string,
 ): Promise<AuthUser | null> {
     const response = await apiRequest<AuthenticatedUserResponse>(
-        "/api/user",
+        "/client/user",
         { token },
     );
 

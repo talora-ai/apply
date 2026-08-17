@@ -1,0 +1,4 @@
+import { UserRound } from "lucide-react";
+import { FeaturePage } from "@/features/platform/components/feature-page";
+import { getAuthenticatedUser } from "@/features/auth/services/get-authenticated-user";
+export default async function ProfilePage() { const user=await getAuthenticatedUser(); return <FeaturePage eyebrow="Conta" title="Meu perfil" description="Revise as informações básicas usadas na sua conta e, futuramente, nas preferências de carreira." icon={UserRound}><div className="grid gap-4 md:grid-cols-2">{[["Nome",`${user?.name ?? ""} ${user?.last_name ?? ""}`.trim()],["E-mail",user?.email ?? "—"]].map(([l,v])=><div key={l} className="rounded-2xl border border-slate-800 bg-[#161C2D]/70 p-5"><span className="text-xs uppercase tracking-wider text-slate-500">{l}</span><strong className="mt-2 block">{v}</strong></div>)}</div></FeaturePage>; }

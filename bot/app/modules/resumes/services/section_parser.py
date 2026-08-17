@@ -12,7 +12,7 @@ from app.modules.resumes.services.skill_detector import SkillDetector
 
 class ResumeSectionParser:
     headings: ClassVar[dict[str, set[str]]] = {
-        "summary": {"resumo", "resumo profissional", "perfil", "profile", "summary"},
+        "summary": {"resumo", "resumo profissional", "perfil", "profile", "summary", "sobre", "about"},
         "experience": {
             "experiência",
             "experiencias",
@@ -21,8 +21,8 @@ class ResumeSectionParser:
             "experience",
             "work experience",
         },
-        "skills": {"habilidades", "competências", "skills", "technical skills"},
-        "projects": {"projetos", "projetos selecionados", "projects", "selected projects"},
+        "skills": {"habilidades", "competências", "skills", "technical skills", "core technologies", "engineering", "engineering skills"},
+        "projects": {"projetos", "projetos selecionados", "projects", "selected projects", "projeto open source", "open source project"},
         "education": {"formação", "formação acadêmica", "education", "academic background"},
         "languages": {"idiomas", "languages"},
         "education_languages": {"formação e idiomas", "education and languages"},
@@ -88,8 +88,15 @@ class ResumeSectionParser:
             r"^(?P<position>.+?)\s+[\u2014\u2013-]\s+"
             r"(?P<company>.+?)\s*\|\s*(?P<period>.+)$"
         )
+        period_pattern = re.compile(
+            r"^(?:[A-Za-zÀ-ÿ]+/?\d{4}|\d{1,2}/\d{4}|\d{4})\s*[\u2014\u2013-]\s*"
+            r"(?:Atual|Presente|Present|Current|[A-Za-zÀ-ÿ]+/?\d{4}|\d{1,2}/\d{4}|\d{4})$",
+            flags=re.IGNORECASE,
+        )
 
-        for line in lines:
+        index = 0
+        while index < len(lines):
+            line = lines[index]
             match = header_pattern.match(line)
             if match:
                 period = match.group("period").strip()
@@ -103,10 +110,28 @@ class ResumeSectionParser:
                     is_current=is_current,
                 )
                 experiences.append(current)
+                index += 1
+                continue
+
+            # Visual/multi-column resumes often place role, company and period on 3 separate lines.
+            if index + 2 < len(lines) and period_pattern.match(lines[index + 2]):
+                period = lines[index + 2].strip()
+                start_date, end_date, is_current = self._parse_period(period)
+                current = ExperienceData(
+                    position=line.strip(),
+                    company=lines[index + 1].strip(),
+                    period=period,
+                    start_date=start_date,
+                    end_date=end_date,
+                    is_current=is_current,
+                )
+                experiences.append(current)
+                index += 3
                 continue
 
             if current is not None:
                 current.description.append(line.lstrip("•- ").strip())
+            index += 1
 
         return experiences
 
@@ -122,7 +147,7 @@ class ResumeSectionParser:
         searchable = "\n".join([text, *section_lines])
         alternatives = "|".join(re.escape(name) for name in self.language_names)
         pattern = re.compile(
-            rf"(?P<name>{alternatives})\s*:\s*(?P<level>.+?)"
+            rf"(?P<name>{alternatives})\s*(?:[:\u2014\u2013-])\s*(?P<level>.+?)"
             rf"(?=(?:\s*(?:{alternatives})\s*:)|\||\n|$)",
             flags=re.IGNORECASE,
         )
@@ -164,7 +189,7 @@ class ResumeSectionParser:
         education: list[str] = []
         languages: list[str] = []
         language_pattern = re.compile(
-            rf"^(?:{'|'.join(re.escape(name) for name in self.language_names)})\s*:",
+            rf"^(?:{'|'.join(re.escape(name) for name in self.language_names)})\s*(?:[:\u2014\u2013-])",
             flags=re.IGNORECASE,
         )
 

@@ -84,7 +84,7 @@ export default function LoginScreen() {
 
             await signIn(token);
 
-            router.replace("/dashboard");
+            router.replace("/");
         } catch (error: unknown) {
             console.error("Login error:", error);
 

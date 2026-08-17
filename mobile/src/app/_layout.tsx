@@ -10,6 +10,7 @@ import {
     useAuth,
 } from "@/features/auth/context/auth-context";
 import { loadStoredLanguage } from "@/i18n";
+import { ToastProvider } from "@/components/feedback/toast-provider";
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -34,9 +35,11 @@ export default function RootLayout() {
     }, []);
 
     return (
-        <AuthProvider>
-            <ApplicationNavigator localeReady={localeReady} />
-        </AuthProvider>
+        <ToastProvider>
+            <AuthProvider>
+                <ApplicationNavigator localeReady={localeReady} />
+            </AuthProvider>
+        </ToastProvider>
     );
 }
 
@@ -47,7 +50,7 @@ type ApplicationNavigatorProps = {
 function ApplicationNavigator({
     localeReady,
 }: ApplicationNavigatorProps) {
-    const { status } = useAuth();
+    const { status, hasResume } = useAuth();
     const applicationReady =
         localeReady && status !== "loading";
 
@@ -82,7 +85,11 @@ function ApplicationNavigator({
                     <Stack.Screen name="(public)" />
                 </Stack.Protected>
 
-                <Stack.Protected guard={authenticated}>
+                <Stack.Protected guard={authenticated && !hasResume}>
+                    <Stack.Screen name="(onboarding)" />
+                </Stack.Protected>
+
+                <Stack.Protected guard={authenticated && hasResume}>
                     <Stack.Screen name="(protected)" />
                 </Stack.Protected>
             </Stack>

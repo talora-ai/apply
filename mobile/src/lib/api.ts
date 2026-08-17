@@ -29,11 +29,13 @@ export async function apiRequest<T>(
     endpoint: string,
     options: ApiRequestOptions = {},
 ): Promise<T> {
+    const isFormData = options.body instanceof FormData;
+
     const response = await fetch(buildApiUrl(endpoint), {
         method: options.method ?? "GET",
         headers: {
             Accept: "application/json",
-            "Content-Type": "application/json",
+            ...(!isFormData ? { "Content-Type": "application/json" } : {}),
             ...(options.token
                 ? {
                       Authorization: `Bearer ${options.token}`,
@@ -42,7 +44,9 @@ export async function apiRequest<T>(
         },
         body:
             options.body !== undefined
-                ? JSON.stringify(options.body)
+                ? isFormData
+                    ? options.body
+                    : JSON.stringify(options.body)
                 : undefined,
     });
 

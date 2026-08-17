@@ -5,6 +5,7 @@ class AtsDiagnosticData(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     ats_friendly: bool
+    score: int | None = Field(default=None, ge=0, le=100)
     confidence: float = Field(ge=0, le=1)
     layout_type: str
     extraction_quality: str

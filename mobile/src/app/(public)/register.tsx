@@ -19,6 +19,7 @@ import {
 
 import { register } from "@/features/auth/services/register-service";
 import { ApiError } from "@/lib/api";
+import { useToast } from "@/components/feedback/toast-provider";
 
 type RegisterErrors = {
     name?: string;
@@ -36,6 +37,7 @@ type Feedback = {
 
 export default function RegisterScreen() {
     const router = useRouter();
+    const toast = useToast();
     const { t } = useTranslation();
 
     const [name, setName] = useState("");

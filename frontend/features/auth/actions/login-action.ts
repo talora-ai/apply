@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { loginSchema } from "@/features/auth/schemas/login-schema";
+import { getUserResumes } from "@/features/resumes/services/get-user-resumes";
 
 import type {
     LoginApiResponse,
@@ -134,5 +135,7 @@ export async function loginAction(
         },
     );
 
-    redirect("/dashboard");
+    const resumes = await getUserResumes(payload.data.token);
+
+    redirect(resumes !== null && resumes.length === 0 ? "/resume-upload" : "/dashboard");
 }

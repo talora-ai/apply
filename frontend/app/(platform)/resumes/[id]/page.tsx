@@ -1,0 +1,40 @@
+import { ArrowLeft, Bot, BrainCircuit, BriefcaseBusiness, FileText, GraduationCap, Languages, ListChecks, ShieldCheck, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { FeaturePage } from "@/features/platform/components/feature-page";
+import { ResumeDeleteButton } from "@/features/resumes/components/resume-delete-button";
+import { getUserResume } from "@/features/resumes/services/get-user-resume";
+
+function strings(values: unknown[] | undefined) { return (values ?? []).map((value) => typeof value === "string" ? value : JSON.stringify(value)); }
+function Score({ label, value }: { label: string; value: number | null | undefined }) { if (value == null) return null; return <div className="rounded-2xl border border-slate-800 bg-[#0F1526] p-4"><span className="text-xs uppercase tracking-wider text-slate-500">{label}</span><strong className="mt-2 block text-2xl text-white">{Math.round(value)}%</strong></div>; }
+
+export default async function ResumeDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const resume = await getUserResume(Number(id));
+    if (!resume) notFound();
+    const sections = resume.content?.sections ?? {};
+    const ai = resume.ai_analysis;
+    const isAI = resume.analysis_origin.type === "talora_ai";
+
+    return <FeaturePage eyebrow="Análise do currículo" title={resume.name} description="Dados estruturados a partir do currículo enviado e processado pelo Talora." icon={FileText}>
+        <div className="flex flex-wrap items-center justify-between gap-3"><Link href="/resumes" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white"><ArrowLeft className="size-4" />Voltar para meus currículos</Link><ResumeDeleteButton id={resume.id} name={resume.name} /></div>
+        <div className={`rounded-3xl border p-5 ${isAI ? "border-[#6D4AFF]/60 bg-[#6D4AFF]/10" : "border-slate-800 bg-[#161C2D]/70"}`}><div className="flex items-center gap-3">{isAI ? <Sparkles className="size-6 text-[#9B84FF]" /> : <Bot className="size-6 text-[#15D0A5]" />}<div><span className="text-xs font-semibold uppercase tracking-[.2em] text-slate-400">Origem da análise</span><strong className={`mt-1 block ${isAI ? "text-[#B8A7FF]" : "text-[#4BE3BF]"}`}>{isAI ? "Analisado pela TALORA AI" : "Analisado pelo BOT Talora"}</strong>{isAI && resume.analysis_origin.model ? <span className="text-xs text-slate-500">{resume.analysis_origin.provider ?? "IA"} · {resume.analysis_origin.model}</span> : null}</div></div></div>
+        {resume.status !== "completed" ? <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5 text-sm text-amber-200">{resume.status === "failed" ? `O processamento falhou (${resume.processing_error ?? "erro desconhecido"}).` : "Este currículo ainda está sendo processado. Os detalhes completos aparecerão quando o BOT finalizar."}</div> : null}
+        <div className="grid gap-4 md:grid-cols-3"><Score label="Compatibilidade ATS" value={resume.ats?.score} /><Score label="ATS pela IA" value={ai?.ats_score} /><Score label="Nota geral" value={ai?.overall_score} /><Score label="Completude" value={ai?.completeness_score} /></div>
+        {resume.ats ? <section className="rounded-3xl border border-slate-800 bg-[#161C2D]/70 p-6"><div className="flex items-center gap-2"><ShieldCheck className="size-5 text-[#15D0A5]"/><h2 className="font-semibold">Leitura ATS</h2></div><div className="mt-4 grid gap-3 sm:grid-cols-3">{typeof resume.ats.ats_friendly === "boolean" ? <Meta label="Compatível" value={resume.ats.ats_friendly ? "Sim" : "Não"}/> : null}{resume.ats.layout_type ? <Meta label="Layout" value={resume.ats.layout_type}/> : null}{resume.ats.extraction_quality ? <Meta label="Qualidade da extração" value={resume.ats.extraction_quality}/> : null}{resume.ats.confidence != null ? <Meta label="Confiança do diagnóstico" value={`${Math.round(resume.ats.confidence * 100)}%`}/> : null}</div></section> : null}
+        {ai?.professional_summary ? <Section title="Resumo profissional" icon={BrainCircuit}><p className="text-sm leading-7 text-slate-300">{ai.professional_summary}</p></Section> : null}
+        {(sections.summary?.length ?? 0) > 0 ? <Section title="Resumo identificado" icon={ListChecks}><Bullets items={sections.summary ?? []}/></Section> : null}
+        {(sections.skills?.length ?? 0) > 0 ? <Section title="Skills identificadas" icon={Sparkles}><div className="flex flex-wrap gap-2">{sections.skills?.map((skill) => <span key={skill} className="rounded-full border border-[#6D4AFF]/30 bg-[#6D4AFF]/10 px-3 py-1.5 text-xs text-[#C2B5FF]">{skill}</span>)}</div></Section> : null}
+        {(sections.experiences?.length ?? 0) > 0 ? <Section title="Experiências" icon={BriefcaseBusiness}><div className="space-y-4">{sections.experiences?.map((item, index) => <article key={`${item.company}-${index}`} className="rounded-2xl border border-slate-800 bg-[#0F1526] p-4"><strong>{item.position}</strong><p className="mt-1 text-sm text-[#4BE3BF]">{item.company}</p><p className="mt-1 text-xs text-slate-500">{item.period}</p><Bullets items={item.description ?? []}/></article>)}</div></Section> : null}
+        {(sections.education?.length ?? 0) > 0 ? <Section title="Formação" icon={GraduationCap}><Bullets items={sections.education ?? []}/></Section> : null}
+        {(sections.languages?.length ?? 0) > 0 ? <Section title="Idiomas" icon={Languages}><div className="grid gap-3 sm:grid-cols-2">{sections.languages?.map((item, index) => <Meta key={`${item.name}-${index}`} label={item.name} value={item.proficiency ?? "Nível não informado"}/>)}</div></Section> : null}
+        {(sections.projects?.length ?? 0) > 0 ? <Section title="Projetos" icon={BriefcaseBusiness}><div className="space-y-4">{sections.projects?.map((item, index) => <article key={`${item.name}-${index}`} className="rounded-2xl border border-slate-800 bg-[#0F1526] p-4"><strong>{item.name}</strong><Bullets items={item.description ?? []}/></article>)}</div></Section> : null}
+        {(sections.certifications?.length ?? 0) > 0 ? <Section title="Certificações" icon={ShieldCheck}><Bullets items={sections.certifications ?? []}/></Section> : null}
+        {isAI && ai ? <section className="rounded-3xl border border-[#6D4AFF]/50 bg-[#6D4AFF]/10 p-6"><div className="flex items-center gap-2 text-[#B8A7FF]"><Sparkles className="size-5"/><h2 className="font-semibold">Insights TALORA AI</h2></div><div className="mt-5 grid gap-5 lg:grid-cols-3"><AiList title="Pontos fortes" values={ai.strengths}/><AiList title="Pontos a melhorar" values={ai.weaknesses}/><AiList title="Sugestões" values={ai.suggestions}/></div></section> : null}
+    </FeaturePage>;
+}
+
+function Section({ title, icon: Icon, children }: { title: string; icon: typeof FileText; children: React.ReactNode }) { return <section className="rounded-3xl border border-slate-800 bg-[#161C2D]/70 p-6"><div className="mb-4 flex items-center gap-2"><Icon className="size-5 text-[#9B84FF]"/><h2 className="font-semibold">{title}</h2></div>{children}</section>; }
+function Bullets({ items }: { items: string[] }) { return <ul className="space-y-2 text-sm leading-6 text-slate-300">{items.map((item, index) => <li key={`${item}-${index}`} className="flex gap-2"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-[#15D0A5]"/>{item}</li>)}</ul>; }
+function Meta({ label, value }: { label: string; value: string }) { return <div className="rounded-2xl border border-slate-800 bg-[#0F1526] p-4"><span className="text-xs uppercase tracking-wider text-slate-500">{label}</span><strong className="mt-2 block text-sm text-white">{value}</strong></div>; }
+function AiList({ title, values }: { title: string; values: unknown[] }) { const items = strings(values); return <div><h3 className="text-sm font-semibold text-white">{title}</h3>{items.length ? <ul className="mt-3 space-y-2 text-sm text-slate-300">{items.map((item, index) => <li key={index}>• {item}</li>)}</ul> : <p className="mt-3 text-sm text-slate-500">Sem dados.</p>}</div>; }

@@ -1,0 +1,16 @@
+import { Search } from "lucide-react";
+import Link from "next/link";
+import { EmptyState, FeaturePage } from "@/features/platform/components/feature-page";
+import { favoriteJobAction } from "@/features/platform/actions/favorite-job-action";
+import { getPlatformData } from "@/features/platform/services/get-platform-data";
+import type { Job, PrimaryResumeRef } from "@/features/platform/types/data";
+
+export default async function SearchJobsPage({searchParams}:{searchParams:Promise<{q?:string}>}){
+ const {q=""}=await searchParams;
+ const data=await getPlatformData<{jobs:Job[];query:string;primary_resume:PrimaryResumeRef}>(`/client/jobs${q?`?q=${encodeURIComponent(q)}`:""}`);
+ return <FeaturePage eyebrow="Oportunidades" title="Procurar vagas" description="Cada compatibilidade é calculada em tempo real com o currículo principal atual." icon={Search}>
+  {data?.primary_resume?<div className="rounded-2xl border border-[#6D4AFF]/30 bg-[#6D4AFF]/10 p-4 text-sm text-slate-300">Comparando com <strong className="text-white">{data.primary_resume.name}</strong>.</div>:<div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100">Escolha um CV processado como principal em <Link href="/resumes" className="font-bold underline">Meus currículos</Link> para ver a compatibilidade.</div>}
+  <form className="rounded-3xl border border-slate-800 bg-[#161C2D]/70 p-5"><div className="flex gap-3"><input name="q" defaultValue={q} className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-[#0B1020] px-4 py-3 text-sm outline-none focus:border-[#6D4AFF]" placeholder="Cargo, tecnologia, local ou empresa"/><button className="rounded-xl bg-[#6D4AFF] px-5 py-3 text-sm font-semibold">Buscar</button></div></form>
+  {data?.jobs?.length?<div className="grid gap-3">{data.jobs.map(j=><article key={j.id} className="rounded-2xl border border-slate-800 bg-[#161C2D]/70 p-5 transition hover:border-[#6D4AFF]/50"><div className="flex items-start justify-between gap-4"><a href={j.application_url} target="_blank" rel="noreferrer" className="min-w-0 flex-1"><h2 className="font-semibold">{j.title}</h2><p className="mt-1 text-sm text-slate-400">{j.company?.name ?? "Empresa não informada"}{j.location?` · ${j.location}`:""}</p><p className="mt-2 text-xs text-slate-500">{[j.workplace_type,j.employment_type,j.seniority_level].filter(Boolean).join(" · ")}</p>{j.matching_skills?.length?<p className="mt-2 text-xs text-slate-600">Matches: {j.matching_skills.join(" · ")}</p>:null}</a><div className="flex items-center gap-3"><span className="text-sm font-bold text-[#15D0A5]">{j.compatibility_score==null?"—":`${j.compatibility_score}%`}</span><form action={favoriteJobAction}><input type="hidden" name="job_id" value={j.id}/><input type="hidden" name="favorite" value={j.is_favorite?"1":"0"}/><button type="submit" className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-300 hover:border-[#6D4AFF]">{j.is_favorite?"Remover favorita":"Favoritar"}</button></form></div></div></article>)}</div>:<EmptyState title="Nenhuma vaga encontrada" text={q?"Não existem vagas ativas correspondentes a esta busca.":"Ainda não existem vagas ativas cadastradas no banco."}/>} 
+ </FeaturePage>
+}
