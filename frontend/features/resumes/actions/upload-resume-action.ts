@@ -11,11 +11,6 @@ const ALLOWED_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 
-export type UploadResumeState = {
-    success: boolean;
-    message?: string;
-};
-
 export async function uploadResumeAction(
     _previousState: ResumeUploadState,
     formData: FormData,

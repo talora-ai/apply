@@ -14,14 +14,11 @@ export function ResumeDeleteButton({ id, name }: { id: number; name: string }) {
     function handleDelete() {
         startTransition(async () => {
             const result = await deleteResumeAction(id);
-
-            if (!result.success) {
-                toast.error(result.message);
-                return;
-            }
-
-            toast.success(result.message ?? 'Currículo excluído com sucesso.');
+            if (!result.success) return toast.error(result.message);
             setOpen(false);
+            toast.success(result.message);
+            router.push("/resumes");
+            router.refresh();
         });
     }
 

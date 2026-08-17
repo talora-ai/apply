@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ENV_FILE="$ROOT/.env.docker"
+EXAMPLE="$ROOT/.env.docker.example"
+COMPOSE=(docker compose --env-file "$ENV_FILE" -f "$ROOT/compose.yaml")
+
+usage() {
+    cat <<'HELP'
+Talora Apply Docker helper
+
+Usage:
+  ./docker/talora init         Prepare secrets, build images and start the stack
+  ./docker/talora up           Start all services
+  ./docker/talora down         Stop all services
+  ./docker/talora restart      Restart all services
+  ./docker/talora ps           Show service status
+  ./docker/talora logs         Follow all logs
+  ./docker/talora backend      Open a shell in the Laravel container
+  ./docker/talora artisan …    Run an Artisan command
+  ./docker/talora redis-ping   Ping the Redis container
+  ./docker/talora npm …        Run npm in the Next.js container
+  ./docker/talora horizon      Follow Horizon logs
+  ./docker/talora reset        Delete containers and local database/Redis volumes
+HELP
+}
+
+require_docker() {
+    command -v docker >/dev/null 2>&1 || { echo 'Docker is required.' >&2; exit 1; }
+    docker compose version >/dev/null 2>&1 || { echo 'Docker Compose v2 is required.' >&2; exit 1; }
+}
+
+random_b64() {
+    openssl rand -base64 32 | tr -d '\n'
+}
+
+random_hex() {
+    openssl rand -hex 32 | tr -d '\n'
+}
+
+set_env() {
+    local key="$1" value="$2"
+    if grep -q "^${key}=" "$ENV_FILE"; then
+        sed -i.bak "s|^${key}=.*|${key}=${value}|" "$ENV_FILE"
+        rm -f "$ENV_FILE.bak"
+    else
+        printf '%s=%s\n' "$key" "$value" >> "$ENV_FILE"
+    fi
+}
+
+prepare_env() {
+    if [[ ! -f "$ENV_FILE" ]]; then
+        cp "$EXAMPLE" "$ENV_FILE"
+    fi
+
+
+    [[ -n "$(grep '^APP_KEY=' "$ENV_FILE" | cut -d= -f2-)" ]] || set_env APP_KEY "base64:$(random_b64)"
+    [[ -n "$(grep '^RESUME_ENCRYPTION_KEY=' "$ENV_FILE" | cut -d= -f2-)" ]] || set_env RESUME_ENCRYPTION_KEY "$(random_b64)"
+    [[ -n "$(grep '^RESUME_DATA_ENCRYPTION_KEY=' "$ENV_FILE" | cut -d= -f2-)" ]] || set_env RESUME_DATA_ENCRYPTION_KEY "$(random_b64)"
+    [[ -n "$(grep '^BOT_SERVICE_TOKEN=' "$ENV_FILE" | cut -d= -f2-)" ]] || set_env BOT_SERVICE_TOKEN "$(random_hex)"
+    [[ -n "$(grep '^BOT_SIGNING_SECRET=' "$ENV_FILE" | cut -d= -f2-)" ]] || set_env BOT_SIGNING_SECRET "$(random_hex)"
+
+    chmod 600 "$ENV_FILE"
+}
+
+require_docker
+cmd="${1:-help}"
+shift || true
+
+case "$cmd" in
+    init)
+        command -v openssl >/dev/null 2>&1 || { echo 'openssl is required for first initialization.' >&2; exit 1; }
+        prepare_env
+        "${COMPOSE[@]}" build
+        "${COMPOSE[@]}" up -d
+        echo
+        echo 'Talora Apply is running:'
+        echo '  Frontend:  http://localhost:3000'
+        echo '  Backend:   http://localhost:8000'
+        echo '  Admin:     http://localhost:8000/admin/login'
+        echo '  Horizon:   http://localhost:8000/horizon'
+        echo '  Pulse:     http://localhost:8000/pulse'
+        echo '  Mailpit:   http://localhost:8025'
+        echo '  BOT docs:  http://localhost:9000/docs'
+        echo
+        echo "Admin: $(grep '^ADMIN_EMAIL=' "$ENV_FILE" | cut -d= -f2-)"
+        echo 'Change ADMIN_PASSWORD in .env.docker before using this outside local development.'
+        ;;
+    up)
+        [[ -f "$ENV_FILE" ]] || { echo 'Run ./docker/talora init first.' >&2; exit 1; }
+        "${COMPOSE[@]}" up -d
+        ;;
+    down)
+        "${COMPOSE[@]}" down
+        ;;
+    restart)
+        "${COMPOSE[@]}" restart
+        ;;
+    ps)
+        "${COMPOSE[@]}" ps
+        ;;
+    logs)
+        "${COMPOSE[@]}" logs -f --tail=200 "$@"
+        ;;
+    backend)
+        "${COMPOSE[@]}" exec backend bash
+        ;;
+    redis-ping)
+        "${COMPOSE[@]}" exec redis redis-cli ping
+        ;;
+
+    redis-check)
+        "${COMPOSE[@]}" exec backend php -r '$r=new Redis(); $r->connect("redis",6379); var_dump($r->ping());'
+        ;;
+
+    artisan)
+        "${COMPOSE[@]}" exec backend php artisan "$@"
+        ;;
+    npm)
+        "${COMPOSE[@]}" exec frontend npm "$@"
+        ;;
+    horizon)
+        "${COMPOSE[@]}" logs -f --tail=200 horizon
+        ;;
+    reset)
+        echo 'This removes PostgreSQL, Redis, storage and dependency volumes.'
+        read -r -p 'Continue? [y/N] ' answer
+        [[ "$answer" =~ ^[Yy]$ ]] || exit 0
+        "${COMPOSE[@]}" down -v --remove-orphans
+        ;;
+    help|-h|--help)
+        usage
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac

@@ -10,12 +10,17 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 COPY --from=uv /uv /uvx /bin/
-COPY pyproject.toml uv.lock* ./
-RUN uv sync --frozen --no-dev || uv sync --no-dev
+
+# Copy dependency metadata first to keep this layer cacheable.
+# README.md is part of the project metadata declared in pyproject.toml.
+COPY pyproject.toml uv.lock README.md ./
+
+# Install only runtime dependencies here. The BOT is executed directly from
+# /app, so installing the local project itself is unnecessary.
+RUN uv sync --frozen --no-dev --no-install-project
 
 COPY app ./app
 
 EXPOSE 9000
 
-CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "9000"]
-
+CMD ["uv", "run", "--no-sync", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "9000"]

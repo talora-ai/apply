@@ -124,3 +124,13 @@ Cada aplicação é independente e possui suas próprias dependências e configu
 - segurança e privacidade desde o início;
 - evolução incremental, com refatoração orientada pelo amadurecimento do produto.
 
+
+## Ambiente Docker integrado
+
+A stack completa de desenvolvimento pode ser inicializada pela raiz do projeto com:
+
+```bash
+./docker/talora init
+```
+
+O ambiente Docker sobe apenas a stack servidora: PostgreSQL, Redis, Backend Laravel, Horizon, Scheduler, Pulse, Frontend Next.js, BOT e Mailpit. O aplicativo mobile permanece fora do Compose e segue o fluxo próprio do Expo/EAS. Consulte [`docker/README.md`](docker/README.md) para os comandos e URLs.

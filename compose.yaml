@@ -1,0 +1,228 @@
+name: ${COMPOSE_PROJECT_NAME:-talora-apply}
+
+x-backend-environment: &backend-environment
+  APP_NAME: Talora Apply
+  APP_ENV: local
+  APP_DEBUG: "true"
+  APP_URL: ${APP_URL:-http://localhost:8000}
+  APP_KEY: ${APP_KEY:?Run ./docker/talora init first}
+  FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+  MOBILE_URL: ${MOBILE_PUBLIC_API_URL:-http://127.0.0.1:8000/api}
+  LOG_CHANNEL: stack
+  LOG_LEVEL: debug
+  DB_CONNECTION: pgsql
+  DB_HOST: postgres
+  DB_PORT: 5432
+  DB_DATABASE: ${POSTGRES_DB:-talora_apply}
+  DB_USERNAME: ${POSTGRES_USER:-talora}
+  DB_PASSWORD: ${POSTGRES_PASSWORD:-talora_local_password}
+  SESSION_DRIVER: database
+  CACHE_STORE: redis
+  QUEUE_CONNECTION: redis
+  REDIS_CLIENT: phpredis
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  MAIL_MAILER: smtp
+  MAIL_HOST: mailpit
+  MAIL_PORT: 1025
+  MAIL_FROM_ADDRESS: no-reply@talora.local
+  MAIL_FROM_NAME: Talora Apply
+  BOT_URL: http://bot:9000
+  BOT_SERVICE_TOKEN: ${BOT_SERVICE_TOKEN:?Run ./docker/talora init first}
+  BOT_SIGNING_SECRET: ${BOT_SIGNING_SECRET:?Run ./docker/talora init first}
+  BOT_CONNECT_TIMEOUT: 5
+  BOT_TIMEOUT: 45
+  BOT_MAX_RESPONSE_KB: 2048
+  RESUME_ENCRYPTION_KEY: ${RESUME_ENCRYPTION_KEY:?Run ./docker/talora init first}
+  RESUME_ENCRYPTION_KEY_VERSION: v1
+  RESUME_ENCRYPTION_MEMORY_BYTES: 12582912
+  RESUME_DATA_ENCRYPTION_KEY: ${RESUME_DATA_ENCRYPTION_KEY:?Run ./docker/talora init first}
+  RESUME_DATA_ENCRYPTION_KEY_VERSION: v1
+  PULSE_ENABLED: "true"
+  PULSE_DB_CONNECTION: pgsql
+  HORIZON_NAME: Talora Apply
+  HORIZON_PATH: horizon
+  HORIZON_PREFIX: "talora_apply_horizon:"
+
+x-backend-service: &backend-service
+  build:
+    context: ./backend
+    dockerfile: ../docker/backend/Dockerfile
+    network: host
+  image: talora-apply-backend:local
+  working_dir: /var/www/html
+  volumes:
+    - ./backend:/var/www/html
+    - backend_vendor:/var/www/html/vendor
+    - backend_storage:/var/www/html/storage/app/private
+  environment: *backend-environment
+  entrypoint: ["/var/www/html/docker-entrypoint.sh"]
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-talora_apply}
+      POSTGRES_USER: ${POSTGRES_USER:-talora}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-talora_local_password}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-talora} -d ${POSTGRES_DB:-talora_apply}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${MAILPIT_SMTP_PORT:-1025}:1025"
+      - "127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025"
+
+  bot:
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+      network: host
+    image: talora-apply-bot:local
+    restart: unless-stopped
+    environment:
+      APP_NAME: Talora Apply Bot
+      APP_ENV: local
+      APP_HOST: 0.0.0.0
+      APP_PORT: 9000
+      BOT_SERVICE_TOKEN: ${BOT_SERVICE_TOKEN:?Run ./docker/talora init first}
+      BOT_SIGNING_SECRET: ${BOT_SIGNING_SECRET:?Run ./docker/talora init first}
+      SIGNATURE_MAX_AGE_SECONDS: 60
+      MAX_FILE_SIZE_MB: 10
+      MAX_PDF_PAGES: 50
+      MAX_DOCX_UNCOMPRESSED_MB: 50
+    ports:
+      - "127.0.0.1:${BOT_PORT:-9000}:9000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9000/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 20
+
+  backend-init:
+    <<: *backend-service
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      bot:
+        condition: service_healthy
+    environment:
+      <<: *backend-environment
+      ADMIN_NAME: ${ADMIN_NAME:-Talora Admin}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@talora.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me-now}
+    command:
+      - sh
+      - -lc
+      - |
+        set -e
+        php artisan optimize:clear
+        php artisan talora:install-monitoring
+        php artisan migrate --force
+        php artisan storage:link || true
+        php artisan admin:create "$${ADMIN_EMAIL}" --name="$${ADMIN_NAME}" --password="$${ADMIN_PASSWORD}"
+        php artisan optimize:clear
+        echo "Talora backend initialized."
+
+  backend:
+    <<: *backend-service
+    restart: unless-stopped
+    depends_on:
+      backend-init:
+        condition: service_completed_successfully
+    command: ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "php", "-r", "$$c=@file_get_contents('http://127.0.0.1:8000/up'); exit($$c===false?1:0);"]
+      interval: 10s
+      timeout: 3s
+      retries: 20
+
+  horizon:
+    <<: *backend-service
+    restart: unless-stopped
+    depends_on:
+      backend-init:
+        condition: service_completed_successfully
+    stop_grace_period: 30s
+    command: ["php", "artisan", "horizon"]
+
+  scheduler:
+    <<: *backend-service
+    restart: unless-stopped
+    depends_on:
+      backend-init:
+        condition: service_completed_successfully
+    command: ["php", "artisan", "schedule:work"]
+
+  pulse-check:
+    <<: *backend-service
+    restart: unless-stopped
+    depends_on:
+      backend-init:
+        condition: service_completed_successfully
+    command: ["php", "artisan", "pulse:check"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend/Dockerfile
+      network: host
+    image: talora-apply-frontend:local
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      NODE_ENV: development
+      API_URL: http://backend:8000/api
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+      - frontend_next:/app/.next
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    command: ["npm", "run", "dev", "--", "--hostname", "0.0.0.0"]
+
+volumes:
+  postgres_data:
+  redis_data:
+  backend_vendor:
+  backend_storage:
+  frontend_node_modules:
+  frontend_next:

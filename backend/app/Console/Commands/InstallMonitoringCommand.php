@@ -20,17 +20,21 @@ final class InstallMonitoringCommand extends Command
             return self::FAILURE;
         }
 
-        Artisan::call('horizon:install', ['--ansi' => true]);
-        $this->line(Artisan::output());
+        if (! File::exists(config_path('horizon.php'))) {
+            Artisan::call('horizon:install', ['--ansi' => true]);
+            $this->line(Artisan::output());
+        }
 
-        Artisan::call('vendor:publish', [
-            '--provider' => 'Laravel\\Pulse\\PulseServiceProvider',
-            '--force' => true,
-        ]);
-        $this->line(Artisan::output());
+        if (! File::exists(config_path('pulse.php'))) {
+            Artisan::call('vendor:publish', [
+                '--provider' => 'Laravel\\Pulse\\PulseServiceProvider',
+                '--force' => true,
+            ]);
+            $this->line(Artisan::output());
 
-        Artisan::call('vendor:publish', ['--tag' => 'pulse-config', '--force' => true]);
-        $this->line(Artisan::output());
+            Artisan::call('vendor:publish', ['--tag' => 'pulse-config', '--force' => true]);
+            $this->line(Artisan::output());
+        }
 
         $this->secureHorizonProvider();
         $this->secureHorizon();

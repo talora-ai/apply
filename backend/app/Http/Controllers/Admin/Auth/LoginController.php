@@ -8,9 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\{Auth, Hash};
 use Illuminate\View\View;
-
+use Illuminate\Support\Facades\DB;
 final class LoginController extends Controller
 {
     public function create(): View|RedirectResponse
